@@ -17,9 +17,9 @@
                         <span class="hero-wave">👋</span>
                     </h1>
                     <div class="hero-subtitle">
-                        <span data-lang="hero-role">Python Developer</span>
+                        <span data-lang="hero-role">Web Developer</span>
                         <span>•</span>
-                        <span>Surakarta Residency, Indonesia 🇮🇩</span>
+                        <span>Cirebon, Indonesia 🇮🇩</span>
                     </div>
                     <p class="hero-desc" data-lang="hero-desc">
                         I explore through code, share with empathy, and reflect on every challenge. My work weaves

@@ -16,39 +16,86 @@
             <span data-lang="status">Open to Work</span>
         </span>
     </div>
+
     <div class="search-box">
         <i class="bi bi-search search-icon"></i>
         <input type="text" class="search-input" data-lang="search" placeholder="Search"
             onclick="openCommandPalette()" readonly>
         <span class="search-shortcut">⌘K</span>
     </div>
+
     <nav class="sidebar-nav">
-        <a href="home.html" class="nav-item active" onclick="closeMobileMenu(event)">
+
+        {{-- HOME --}}
+        <a href="{{ route('home.index') }}" class="nav-item {{ request()->routeIs('home.index') ? 'active' : '' }}"
+            onclick="closeMobileMenu(event)">
             <i class="bi bi-house-door-fill"></i>
             <span data-lang="nav-home">Home</span>
-            <i class="bi bi-arrow-right nav-arrow"></i>
+
+            @if (request()->routeIs('home.index'))
+                <i class="bi bi-arrow-right nav-arrow"></i>
+            @endif
         </a>
-        <a href="projects.html" class="nav-item" onclick="closeMobileMenu(event)">
+
+        {{-- PROJECTS --}}
+        <a href="{{ route('project.index') }}"
+            class="nav-item {{ request()->routeIs('project.index') ? 'active' : '' }}" onclick="closeMobileMenu(event)">
             <i class="bi bi-kanban"></i>
             <span data-lang="nav-projects">Projects</span>
+
+            @if (request()->routeIs('project.index'))
+                <i class="bi bi-arrow-right nav-arrow"></i>
+            @endif
         </a>
-        <a href="blog.html" class="nav-item" onclick="closeMobileMenu(event)">
+
+        {{-- BLOG --}}
+        <a href="{{ route('blog.index') }}" class="nav-item {{ request()->routeIs('blog.index') ? 'active' : '' }}"
+            onclick="closeMobileMenu(event)">
             <i class="bi bi-rss"></i>
             <span data-lang="nav-blog">Blog</span>
+
+            @if (request()->routeIs('blog.index'))
+                <i class="bi bi-arrow-right nav-arrow"></i>
+            @endif
         </a>
-        <a href="about.html" class="nav-item" onclick="closeMobileMenu(event)">
+
+        {{-- ABOUT --}}
+        <a href="{{ route('about.index') }}" class="nav-item {{ request()->routeIs('about.index') ? 'active' : '' }}"
+            onclick="closeMobileMenu(event)">
             <i class="bi bi-person"></i>
             <span data-lang="nav-about">About</span>
+
+            @if (request()->routeIs('about.index'))
+                <i class="bi bi-arrow-right nav-arrow"></i>
+            @endif
         </a>
-        <a href="contact.html" class="nav-item" onclick="closeMobileMenu(event)">
+
+        {{-- CONTACT --}}
+        <a href="{{ route('contact.index') }}"
+            class="nav-item {{ request()->routeIs('contact.index') ? 'active' : '' }}"
+            onclick="closeMobileMenu(event)">
             <i class="bi bi-envelope"></i>
             <span data-lang="nav-contact">Contact</span>
+
+            @if (request()->routeIs('contact.index'))
+                <i class="bi bi-arrow-right nav-arrow"></i>
+            @endif
         </a>
-        <a href="guestbook.html" class="nav-item" onclick="closeMobileMenu(event)">
+
+        {{-- GUESTBOOK --}}
+        <a href="{{ route('guestbook.index') }}"
+            class="nav-item {{ request()->routeIs('guestbook.index') ? 'active' : '' }}"
+            onclick="closeMobileMenu(event)">
             <i class="bi bi-chat-left-quote"></i>
             <span data-lang="nav-guestbook">Guestbook</span>
+
+            @if (request()->routeIs('guestbook.index'))
+                <i class="bi bi-arrow-right nav-arrow"></i>
+            @endif
         </a>
+
     </nav>
+
     <div class="sidebar-footer">
         <div class="footer-links">
             <a href="#">OpenHire</a>
