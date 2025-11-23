@@ -13,6 +13,12 @@
                     <i class="fas fa-home"></i> <span>Dashboard</span>
                 </a>
             </li>
+            <li class="menu-header">Setting</li>
+            <li class="nav-item {{ Request::is('setting/tech-stack') ? 'active' : '' }}">
+                <a href="{{ route('tech-stack.index') }}" class="nav-link">
+                    <i class="fas fa-home"></i> <span>Tech Stack</span>
+                </a>
+            </li>
         </ul>
     </aside>
 </div>

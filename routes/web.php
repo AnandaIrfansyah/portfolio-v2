@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\TechStackController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Pages\AboutController;
 use App\Http\Controllers\Pages\BlogController;
@@ -41,12 +43,28 @@ Route::prefix('guestbook')->group(function () {
 });
 
 
-Route::middleware(['auth'])->group(
+Route::middleware(['auth', 'role:author'])->group(
     function () {
-        Route::prefix('dashboard')->middleware(['role:author'])->group(function () {
+        Route::prefix('dashboard')->group(function () {
             Route::get('/', function () {
                 return view('admin.dashboard.index');
             })->name('author.dashboard');
+        });
+
+        Route::prefix('profile')->group(function () {
+            Route::get('/', [ProfileController::class, 'index'])->name('profile.index');
+            Route::post('/', [ProfileController::class, 'update'])->name('profile.update');
+        });
+
+        Route::prefix('setting')->group(function () {
+
+            Route::prefix('tech-stack')->group(function () {
+                Route::get('/', [TechStackController::class, 'index'])->name('tech-stack.index');
+                Route::post('/store', [TechStackController::class, 'store'])->name('tech-stack.store');
+                Route::get('/{id}/show', [TechStackController::class, 'show'])->name('tech-stack.show');
+                Route::put('/{id}/update', [TechStackController::class, 'update'])->name('tech-stack.update');
+                Route::delete('/{id}/destroy', [TechStackController::class, 'destroy'])->name('tech-stack.destroy');
+            });
         });
     }
 );

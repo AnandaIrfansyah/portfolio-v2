@@ -13,25 +13,23 @@
                 <div class="col-12">
                     <h1 class="hero-title">
                         <span data-lang="hero-greeting">Hi, I'm</span>
-                        <span class="hero-name">Ananda Irfansyah</span>
+                        <span class="hero-name">{{ $user->name }}</span>
                         <span class="hero-wave">👋</span>
                     </h1>
                     <div class="hero-subtitle">
-                        <span data-lang="hero-role">Web Developer</span>
+                        <span data-lang="hero-role">{{ $user->job_title }}</span>
                         <span>•</span>
-                        <span>Cirebon, Indonesia 🇮🇩</span>
+                        <span>{{ $user->location }} 🇮🇩</span>
                     </div>
-                    <p class="hero-desc" data-lang="hero-desc">
-                        I explore through code, share with empathy, and reflect on every challenge. My work weaves
-                        machine learning, web creation, and open source. I thrive on collaborating with teams to
-                        develop AI and web solutions that blend function with clarity.
-                    </p>
+
+                    <div class="hero-desc">{!! $user->bio !!}</div>
+
                     <div class="hero-buttons">
-                        <a href="#" class="btn btn-primary">
+                        <a href="{{ route('about.index') }}" class="btn btn-primary">
                             <i class="bi bi-person"></i>
                             <span data-lang="btn-about">About</span>
                         </a>
-                        <a href="#" class="btn btn-outline">
+                        <a href="{{ route('contact.index') }}" class="btn btn-outline">
                             <i class="bi bi-envelope"></i>
                             <span data-lang="btn-contact">Contact</span>
                         </a>
@@ -158,7 +156,8 @@
                                 </p>
                                 <div class="blog-meta">
                                     <div class="blog-author">
-                                        <img src="{{ asset('pages/img/hero.png') }}" alt="Author" class="author-avatar">
+                                        <img src="{{ asset('pages/img/hero.png') }}" alt="Author"
+                                            class="author-avatar">
                                         <span class="author-name">Ananda Irfansyah</span>
                                     </div>
                                     <span class="blog-date">July 9, 2025</span>
@@ -181,7 +180,8 @@
                                 </p>
                                 <div class="blog-meta">
                                     <div class="blog-author">
-                                        <img src="{{ asset('pages/img/hero.png') }}" alt="Author" class="author-avatar">
+                                        <img src="{{ asset('pages/img/hero.png') }}" alt="Author"
+                                            class="author-avatar">
                                         <span class="author-name">Ananda Irfansyah</span>
                                     </div>
                                     <span class="blog-date">July 7, 2025</span>
@@ -204,7 +204,8 @@
                                 </p>
                                 <div class="blog-meta">
                                     <div class="blog-author">
-                                        <img src="{{ asset('pages/img/hero.png') }}" alt="Author" class="author-avatar">
+                                        <img src="{{ asset('pages/img/hero.png') }}" alt="Author"
+                                            class="author-avatar">
                                         <span class="author-name">Ananda Irfansyah</span>
                                     </div>
                                     <span class="blog-date">June 15, 2025</span>
@@ -234,8 +235,7 @@
 
         <div class="divider"></div>
 
-        <!-- Tools Section -->
-        <section class="tools-section">
+        {{-- <section class="tools-section">
             <div class="row">
                 <div class="col-12">
                     <h2 class="section-title">
@@ -288,7 +288,39 @@
                     <span class="tool-badge"><i class="bi bi-git" style="color: #f05032;"></i> Git</span>
                 </div>
             </div>
+        </section> --}}
+
+        <!-- Tools Section -->
+        <section class="tools-section">
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="section-title">
+                        <span data-lang="section-tools">Tools</span>
+                        <span data-lang="section-used">I've Used</span>
+                    </h2>
+                </div>
+            </div>
+
+            <div class="tools-wrapper">
+                <div class="tools-row">
+                    @foreach ($techStacks as $tool)
+                        <span class="tool-badge">
+                            <i class="{{ $tool->icon_class }}"></i>
+                            {{ $tool->name }}
+                        </span>
+                    @endforeach
+                </div>
+                <div class="tools-row">
+                    @foreach ($techStacks as $tool)
+                        <span class="tool-badge">
+                            <i class="{{ $tool->icon_class }}"></i>
+                            {{ $tool->name }}
+                        </span>
+                    @endforeach
+                </div>
+            </div>
         </section>
+
 
         <div class="divider"></div>
 
@@ -303,10 +335,10 @@
                                 Help me continue creating open source projects and sharing knowledge with the
                                 community!
                             </p>
-                            <button class="btn btn-support">
+                            <a href="{{ $user->support_url }}" target="_blank" class="btn btn-support">
                                 <i class="bi bi-heart-fill"></i>
                                 <span data-lang="btn-support">Support</span>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -332,7 +364,7 @@
                 'nav-contact': 'Contact',
                 'nav-guestbook': 'Guestbook',
                 'hero-greeting': "Hi, I'm",
-                'hero-role': 'Python Developer',
+                'hero-role': 'Web Developer',
                 'hero-desc': "I explore through code, share with empathy, and reflect on every challenge. My work weaves machine learning, web creation, and open source. I thrive on collaborating with teams to develop AI and web solutions that blend function with clarity.",
                 'btn-about': 'About',
                 'btn-contact': 'Contact',
@@ -362,7 +394,7 @@
                 'nav-contact': 'Kontak',
                 'nav-guestbook': 'Buku Tamu',
                 'hero-greeting': 'Hai, Saya',
-                'hero-role': 'Developer Python',
+                'hero-role': 'Developer Web',
                 'hero-desc': 'Saya mengeksplorasi melalui kode, berbagi dengan empati, dan merefleksikan setiap tantangan. Pekerjaan saya menggabungkan pembelajaran mesin, pembuatan web, dan sumber terbuka. Saya senang berkolaborasi dengan tim untuk mengembangkan solusi AI dan web yang memadukan fungsi dengan kejelasan.',
                 'btn-about': 'Tentang',
                 'btn-contact': 'Kontak',

@@ -59,6 +59,8 @@
         </div>
     </div>
 
+    @stack('modal')
+
     <!-- General JS Scripts -->
     <script src="{{ asset('admin/library/jquery/dist/jquery.min.js') }}"></script>
     <script src="{{ asset('admin/library/popper.js/dist/umd/popper.js') }}"></script>
