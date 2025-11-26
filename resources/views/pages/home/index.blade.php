@@ -51,7 +51,7 @@
                     <div class="section-header">
                         <h2 class="section-title">
                             <span data-lang="section-latest">Latest</span>
-                            <span data-lang="section-blogs">Blogs</span>
+                            <span data-lang="section-blogs">Publications</span>
                         </h2>
                         <a href="#" class="view-all-link">
                             <span data-lang="view-all">View All</span>
@@ -305,15 +305,15 @@
                 <div class="tools-row">
                     @foreach ($techStacks as $tool)
                         <span class="tool-badge">
-                            <i class="{{ $tool->icon_class }}"></i>
+                            <i class="{{ $tool->icon_class }}" style="color: {{ $tool->icon_color ?? '#ffffff' }}"></i>
                             {{ $tool->name }}
                         </span>
                     @endforeach
                 </div>
                 <div class="tools-row">
-                    @foreach ($techStacks as $tool)
+                    @foreach ($techStacks->reverse() as $tool)
                         <span class="tool-badge">
-                            <i class="{{ $tool->icon_class }}"></i>
+                            <i class="{{ $tool->icon_class }}" style="color: {{ $tool->icon_color ?? '#ffffff' }}"></i>
                             {{ $tool->name }}
                         </span>
                     @endforeach
@@ -351,101 +351,4 @@
 @endpush
 
 @push('scripts')
-    <script>
-        // Language translations (TEMPORARY - will be replaced by Laravel localization)
-        const translations = {
-            en: {
-                'status': 'Open to Work',
-                'search': 'Search',
-                'nav-home': 'Home',
-                'nav-projects': 'Projects',
-                'nav-blog': 'Blog',
-                'nav-about': 'About',
-                'nav-contact': 'Contact',
-                'nav-guestbook': 'Guestbook',
-                'hero-greeting': "Hi, I'm",
-                'hero-role': 'Web Developer',
-                'hero-desc': "I explore through code, share with empathy, and reflect on every challenge. My work weaves machine learning, web creation, and open source. I thrive on collaborating with teams to develop AI and web solutions that blend function with clarity.",
-                'btn-about': 'About',
-                'btn-contact': 'Contact',
-                'btn-hireable': 'Hireable',
-                'section-latest': 'Latest',
-                'section-blogs': 'Blogs',
-                'view-all': 'View All',
-                'blog1-title': 'How Usage Monitoring Sustains MLBB-Stats and API-PDDIKTI',
-                'blog1-excerpt': 'Two open APIs remain online through a robust threshold system and manual code-based controls, ensuring sustainable...',
-                'blog2-title': 'Project Priority: What It Is and How to Master It',
-                'blog2-excerpt': 'Learn how to prioritize projects effectively based on urgency, complexity, and impact to stay focused and meet deadlines.',
-                'blog3-title': 'Remain Online with Low Usage Threshold',
-                'blog3-excerpt': 'The planned shutdown APIs remain accessible, under a memory usage threshold, ensuring continued service for the community.',
-                'section-tools': 'Tools',
-                'section-used': "I've Used",
-                'support-title': 'Support My Work',
-                'support-desc': 'Help me continue creating open source projects and sharing knowledge with the community!',
-                'btn-support': 'Support'
-            },
-            id: {
-                'status': 'Terbuka untuk Kerja',
-                'search': 'Cari',
-                'nav-home': 'Beranda',
-                'nav-projects': 'Proyek',
-                'nav-blog': 'Blog',
-                'nav-about': 'Tentang',
-                'nav-contact': 'Kontak',
-                'nav-guestbook': 'Buku Tamu',
-                'hero-greeting': 'Hai, Saya',
-                'hero-role': 'Developer Web',
-                'hero-desc': 'Saya mengeksplorasi melalui kode, berbagi dengan empati, dan merefleksikan setiap tantangan. Pekerjaan saya menggabungkan pembelajaran mesin, pembuatan web, dan sumber terbuka. Saya senang berkolaborasi dengan tim untuk mengembangkan solusi AI dan web yang memadukan fungsi dengan kejelasan.',
-                'btn-about': 'Tentang',
-                'btn-contact': 'Kontak',
-                'btn-hireable': 'Bisa Dipekerjakan',
-                'section-latest': 'Terbaru',
-                'section-blogs': 'Blog',
-                'view-all': 'Lihat Semua',
-                'blog1-title': 'Cara Pemantauan Penggunaan Mempertahankan MLBB-Stats dan API-PDDIKTI',
-                'blog1-excerpt': 'Dua API terbuka tetap online melalui sistem ambang batas yang kuat dan kontrol berbasis kode manual, memastikan keberlanjutan...',
-                'blog2-title': 'Prioritas Proyek: Apa Itu dan Cara Menguasainya',
-                'blog2-excerpt': 'Pelajari cara memprioritaskan proyek secara efektif berdasarkan urgensi, kompleksitas, dan dampak untuk tetap fokus dan memenuhi tenggat waktu.',
-                'blog3-title': 'Tetap Online dengan Ambang Batas Penggunaan Rendah',
-                'blog3-excerpt': 'API yang direncanakan untuk ditutup tetap dapat diakses, di bawah ambang batas penggunaan memori, memastikan layanan berkelanjutan untuk komunitas.',
-                'section-tools': 'Alat',
-                'section-used': 'Yang Saya Gunakan',
-                'support-title': 'Dukung Karya Saya',
-                'support-desc': 'Bantu saya terus membuat proyek sumber terbuka dan berbagi pengetahuan dengan komunitas!',
-                'btn-support': 'Dukung'
-            }
-        };
-
-        let currentLanguage = 'en';
-
-        function toggleLanguage() {
-            currentLanguage = currentLanguage === 'en' ? 'id' : 'en';
-            updateLanguage();
-            document.body.style.opacity = '0.8';
-            setTimeout(() => {
-                document.body.style.opacity = '1';
-            }, 150);
-        }
-
-        function updateLanguage() {
-            const elements = document.querySelectorAll('[data-lang]');
-            elements.forEach(element => {
-                const key = element.getAttribute('data-lang');
-                if (translations[currentLanguage][key]) {
-                    if (element.tagName === 'INPUT') {
-                        element.placeholder = translations[currentLanguage][key];
-                    } else {
-                        element.textContent = translations[currentLanguage][key];
-                    }
-                }
-            });
-            const langElement = document.getElementById('currentLang');
-            if (langElement) {
-                langElement.textContent = currentLanguage.toUpperCase();
-            }
-        }
-
-        // Initialize language
-        updateLanguage();
-    </script>
 @endpush

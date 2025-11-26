@@ -35,14 +35,14 @@
                     </span>
                 </a>
 
-                <a href="{{ route('blog.index') }}"
-                    class="command-item {{ request()->routeIs('blog.index') ? 'current' : '' }}">
+                <a href="{{ route('publication.index') }}"
+                    class="command-item {{ request()->routeIs('publication.index') ? 'current' : '' }}">
                     <div class="command-item-left">
                         <i class="bi bi-rss command-item-icon"></i>
-                        <span class="command-item-text">Blog</span>
+                        <span class="command-item-text">Publication</span>
                     </div>
                     <span class="command-item-badge">
-                        {{ request()->routeIs('blog.index') ? 'You are here' : 'Pages' }}
+                        {{ request()->routeIs('publication.index') ? 'You are here' : 'Pages' }}
                     </span>
                 </a>
 

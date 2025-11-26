@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\Admin\AuthorController;
 use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\PublicationController as AdminPublicationController;
+use App\Http\Controllers\Admin\PublicationTagController;
 use App\Http\Controllers\Admin\TechStackController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Pages\AboutController;
@@ -9,6 +12,7 @@ use App\Http\Controllers\Pages\ContactController;
 use App\Http\Controllers\Pages\GuestBookController;
 use App\Http\Controllers\Pages\HomeController;
 use App\Http\Controllers\Pages\ProjectController;
+use App\Http\Controllers\Pages\PublicationController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -29,8 +33,8 @@ Route::prefix('home')->group(function () {
 Route::prefix('projects')->group(function () {
     Route::get('/', [ProjectController::class, 'index'])->name('project.index');
 });
-Route::prefix('blog')->group(function () {
-    Route::get('/', [BlogController::class, 'index'])->name('blog.index');
+Route::prefix('publication')->group(function () {
+    Route::get('/', [PublicationController::class, 'index'])->name('publication.index');
 });
 Route::prefix('about')->group(function () {
     Route::get('/', [AboutController::class, 'index'])->name('about.index');
@@ -65,6 +69,27 @@ Route::middleware(['auth', 'role:author'])->group(
                 Route::put('/{id}/update', [TechStackController::class, 'update'])->name('tech-stack.update');
                 Route::delete('/{id}/destroy', [TechStackController::class, 'destroy'])->name('tech-stack.destroy');
             });
+        });
+
+        // ✅ PUBLICATIONS (TERPISAH, GAK DI SETTING)
+        Route::prefix('publications')->group(function () {
+            Route::get('/', [AdminPublicationController::class, 'index'])->name('publications.index');
+            Route::post('/store', [AdminPublicationController::class, 'store'])->name('publications.store');
+            Route::get('/{id}/show', [AdminPublicationController::class, 'show'])->name('publications.show');
+            Route::put('/{id}/update', [AdminPublicationController::class, 'update'])->name('publications.update');
+            Route::delete('/{id}/destroy', [AdminPublicationController::class, 'destroy'])->name('publications.destroy');
+        });
+
+        // ✅ AUTHORS (Helper untuk dropdown/quick add)
+        Route::prefix('authors')->group(function () {
+            Route::get('/list', [AuthorController::class, 'list'])->name('authors.list');
+            Route::post('/store', [AuthorController::class, 'store'])->name('authors.store');
+        });
+
+        // ✅ TAGS (Helper untuk dropdown/quick add)
+        Route::prefix('tags')->group(function () {
+            Route::get('/list', [PublicationTagController::class, 'list'])->name('tags.list');
+            Route::post('/store', [PublicationTagController::class, 'store'])->name('tags.store');
         });
     }
 );

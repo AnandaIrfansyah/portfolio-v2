@@ -147,14 +147,15 @@
                         {{-- Name --}}
                         <div class="form-group">
                             <label>Nama Tech</label>
-                            <input type="text" id="name" class="form-control">
+                            <input type="text" id="name" class="form-control" placeholder="Contoh: Laravel">
                             <span class="text-danger error_name"></span>
                         </div>
 
                         {{-- Icon --}}
                         <div class="form-group">
                             <label>Icon Class</label>
-                            <input type="text" id="icon_class" class="form-control" oninput="previewIcon()">
+                            <input type="text" id="icon_class" class="form-control" placeholder="bi bi-laravel"
+                                oninput="previewIcon()">
                             <span class="text-danger error_icon_class"></span>
 
                             <div class="mt-2">
@@ -163,12 +164,20 @@
                             </div>
                         </div>
 
+                        <div class="mb-3">
+                            <label for="icon_color" class="form-label">Icon Color</label>
+                            <input type="color" id="icon_color" class="form-control">
+                        </div>
+
                         {{-- Category --}}
                         <div class="form-group">
                             <label>Kategori</label>
-                            <input type="text" id="category" class="form-control">
+                            <input type="text" id="category" class="form-control"
+                                placeholder="Framework, Bahasa, dll">
                             <span class="text-danger error_category"></span>
                         </div>
+
+
 
                     </div>
                 </form>
@@ -186,6 +195,17 @@
 
 {{-- ====================== JAVASCRIPT ====================== --}}
 @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        const Toast = Swal.mixin({
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 2000
+        });
+    </script>
+
     <script>
         const BASE = "{{ route('tech-stack.index') }}";
 
@@ -207,8 +227,11 @@
 
         function previewIcon() {
             let icon = $("#icon_class").val();
-            $("#iconPreview").html(`<i class="${icon}"></i>`);
+            let color = $("#icon_color").val() || "#000";
+            $("#iconPreview").html(`<i class="${icon}" style="color:${color}; font-size:32px"></i>`);
         }
+
+        $("#icon_color").on("input", previewIcon);
 
         $("#storeBtn").click(function() {
             let type = $("#type").val();
@@ -216,7 +239,7 @@
 
             let url = type === "create" ?
                 "{{ route('tech-stack.store') }}" :
-                BASE + "/" + id + "/update";
+                `/setting/tech-stack/${id}/update`;
 
             $.ajax({
                 url: url,
@@ -224,76 +247,89 @@
                 data: {
                     name: $("#name").val(),
                     icon_class: $("#icon_class").val(),
+                    icon_color: $("#icon_color").val(),
                     category: $("#category").val(),
                     _token: "{{ csrf_token() }}"
-                },
+                }
             }).done(resp => {
                 if (resp.errors) {
+                    Toast.fire({
+                        icon: "error",
+                        title: "Periksa input kamu."
+                    });
                     showErrors(resp.errors);
                 } else {
                     $("#stack-modal").modal("hide");
-                    Swal.fire({
+                    Toast.fire({
                         icon: "success",
-                        title: resp.message,
-                        timer: 1500
+                        title: resp.message
                     });
-                    setTimeout(() => location.reload(), 1200);
+                    setTimeout(() => location.reload(), 800);
                 }
             });
         });
 
-        function showErrors(errors) {
-            $.each(errors, function(key, value) {
-                $("#" + key).addClass("is-invalid");
-                $(".error_" + key).html(value);
-
-                setTimeout(() => {
-                    $("#" + key).removeClass("is-invalid");
-                    $(".error_" + key).html('');
-                }, 3000);
-            });
-        }
-
         function editModal(id) {
-            $.get(BASE + "/" + id + "/show", function(resp) {
-                let d = resp.data;
 
-                $("#stack-modal").modal("show");
-                $(".modal-title").html("Edit Tech Stack");
+            $.ajax({
+                url: BASE + "/" + id + "/show",
+                method: "GET",
+                success: function(resp) {
 
-                $("#id").val(d.id);
-                $("#type").val("update");
+                    if (!resp.status) {
+                        Toast.fire({
+                            icon: "error",
+                            title: "Data tidak ditemukan"
+                        });
+                        return;
+                    }
 
-                $("#name").val(d.name);
-                $("#icon_class").val(d.icon_class);
-                $("#category").val(d.category);
+                    let d = resp.data;
 
-                previewIcon();
+                    $("#id").val(d.id);
+                    $("#type").val("update");
+
+                    $("#name").val(d.name);
+                    $("#icon_class").val(d.icon_class);
+                    $("#icon_color").val(d.icon_color);
+                    $("#category").val(d.category);
+
+                    previewIcon();
+
+                    $("#stack-modal").modal("show");
+                },
+
+                error() {
+                    Toast.fire({
+                        icon: "error",
+                        title: "Gagal mengambil data."
+                    });
+                }
             });
+
         }
 
         function deleteItem(id) {
             Swal.fire({
                 title: "Hapus?",
-                text: "Data akan dihapus permanen.",
+                text: "Data tidak dapat dikembalikan.",
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonText: "Hapus"
-            }).then(res => {
-                if (res.isConfirmed) {
+            }).then(result => {
+                if (result.isConfirmed) {
                     $.ajax({
-                        url: BASE + "/" + id + "/destroy",
+                        url: `/setting/tech-stack/${id}/destroy`,
                         method: "DELETE",
                         data: {
                             _token: "{{ csrf_token() }}"
                         },
-                        success: function(resp) {
-                            Swal.fire({
+                        success: resp => {
+                            Toast.fire({
                                 icon: "success",
-                                title: resp.message,
-                                timer: 1500
+                                title: resp.message
                             });
-                            setTimeout(() => location.reload(), 1200);
+                            setTimeout(() => location.reload(), 700);
                         }
                     });
                 }

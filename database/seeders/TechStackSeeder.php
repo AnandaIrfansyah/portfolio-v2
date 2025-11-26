@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\TechStack;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class TechStackSeeder extends Seeder
 {
@@ -13,117 +14,159 @@ class TechStackSeeder extends Seeder
      */
     public function run(): void
     {
-        $data = [
-            // ===== Framework / Library =====
-            [
-                'name' => 'Laravel',
-                'slug' => 'laravel',
-                'icon_class' => 'fab fa-laravel',
-                'category' => 'Framework',
-            ],
-            [
-                'name' => 'TailwindCSS',
-                'slug' => 'tailwindcss',
-                'icon_class' => 'fab fa-css3-alt', // generic css icon
-                'category' => 'CSS Framework',
-            ],
-            [
-                'name' => 'Bootstrap',
-                'slug' => 'bootstrap',
-                'icon_class' => 'fab fa-bootstrap',
-                'category' => 'CSS Framework',
-            ],
-            [
-                'name' => 'jQuery',
-                'slug' => 'jquery',
-                'icon_class' => 'fas fa-code',
-                'category' => 'JavaScript Library',
-            ],
-            [
-                'name' => 'Livewire',
-                'slug' => 'livewire',
-                'icon_class' => 'bi bi-lightning-charge-fill', // best match
-                'category' => 'Framework',
-            ],
+        $items = [
 
-            // ===== Languages =====
+            // Bahasa Pemrograman
             [
+                'category' => 'Bahasa Pemrograman',
                 'name' => 'PHP',
-                'slug' => 'php',
-                'icon_class' => 'fab fa-php',
-                'category' => 'Programming Language',
+                'icon_class' => 'bi bi-filetype-php',
+                'icon_color' => '#777bb3'
             ],
             [
+                'category' => 'Bahasa Pemrograman',
+                'name' => 'Dart',
+                'icon_class' => 'bi bi-filetype-js', // BI tidak punya dart
+                'icon_color' => '#0175C2'
+            ],
+            [
+                'category' => 'Bahasa Pemrograman',
                 'name' => 'JavaScript',
-                'slug' => 'javascript',
-                'icon_class' => 'fab fa-js',
-                'category' => 'Programming Language',
-            ],
-            [
-                'name' => 'HTML5',
-                'slug' => 'html5',
-                'icon_class' => 'fab fa-html5',
-                'category' => 'Markup Language',
-            ],
-            [
-                'name' => 'CSS3',
-                'slug' => 'css3',
-                'icon_class' => 'fab fa-css3-alt',
-                'category' => 'Style Sheet',
+                'icon_class' => 'bi bi-filetype-js',
+                'icon_color' => '#f7df1e'
             ],
 
-            // ===== Tools =====
+            // Pengembangan Web
             [
-                'name' => 'Git',
-                'slug' => 'git',
-                'icon_class' => 'fab fa-git-alt',
-                'category' => 'Tools',
+                'category' => 'Pengembangan Web',
+                'name' => 'HTML',
+                'icon_class' => 'bi bi-filetype-html',
+                'icon_color' => '#e44d26'
             ],
             [
-                'name' => 'GitHub',
-                'slug' => 'github',
-                'icon_class' => 'fab fa-github',
-                'category' => 'Tools',
+                'category' => 'Pengembangan Web',
+                'name' => 'CSS',
+                'icon_class' => 'bi bi-filetype-css',
+                'icon_color' => '#1572b6'
             ],
             [
-                'name' => 'Composer',
-                'slug' => 'composer',
-                'icon_class' => 'fas fa-music', // closest match
-                'category' => 'Tools',
+                'category' => 'Pengembangan Web',
+                'name' => 'Bootstrap',
+                'icon_class' => 'bi bi-bootstrap',
+                'icon_color' => '#7952b3'
             ],
             [
-                'name' => 'VSCode',
-                'slug' => 'vscode',
-                'icon_class' => 'fas fa-code',
-                'category' => 'Editor',
+                'category' => 'Pengembangan Web',
+                'name' => 'WordPress',
+                'icon_class' => 'bi bi-wordpress',
+                'icon_color' => '#21759b'
             ],
             [
+                'category' => 'Pengembangan Web',
+                'name' => 'Laravel',
+                'icon_class' => 'fab fa-laravel', // pakai Laravel icon unofficial
+                'icon_color' => '#ff2d20'
+            ],
+
+            // Mobile Developer
+            [
+                'category' => 'Mobile Developer',
+                'name' => 'Flutter',
+                'icon_class' => 'bi bi-phone', // BI tidak punya flutter
+                'icon_color' => '#02569B'
+            ],
+
+            // UI/UX
+            [
+                'category' => 'UI/UX Designer',
                 'name' => 'Figma',
-                'slug' => 'figma',
-                'icon_class' => 'fab fa-figma',
-                'category' => 'Design',
+                'icon_class' => 'bi bi-palette',
+                'icon_color' => '#F24E1E'
             ],
 
-            // ===== Database =====
+            // Database
             [
-                'name' => 'MySQL',
-                'slug' => 'mysql',
-                'icon_class' => 'fas fa-database',
                 'category' => 'Database',
+                'name' => 'MySQL',
+                'icon_class' => 'bi bi-database',
+                'icon_color' => '#00618A'
             ],
             [
-                'name' => 'phpMyAdmin',
-                'slug' => 'phpmyadmin',
-                'icon_class' => 'fas fa-database',
-                'category' => 'Database Tool',
+                'category' => 'Database',
+                'name' => 'SQLite',
+                'icon_class' => 'bi bi-collection',
+                'icon_color' => '#003B57'
+            ],
+
+            // Version Control
+            [
+                'category' => 'Version Control',
+                'name' => 'Git',
+                'icon_class' => 'bi bi-git',
+                'icon_color' => '#f05032'
+            ],
+            [
+                'category' => 'Version Control',
+                'name' => 'GitHub',
+                'icon_class' => 'bi bi-github',
+                'icon_color' => '#ffffff'
+            ],
+
+            // API & Testing
+            [
+                'category' => 'API & Testing',
+                'name' => 'Postman',
+                'icon_class' => 'bi bi-clipboard-data',
+                'icon_color' => '#ff6c37'
+            ],
+
+            // PaaS
+            [
+                'category' => 'PaaS',
+                'name' => 'Vercel',
+                'icon_class' => 'bi bi-triangle-fill',
+                'icon_color' => '#000000'
+            ],
+            [
+                'category' => 'PaaS',
+                'name' => 'Cloudflare Pages',
+                'icon_class' => 'bi bi-cloud-fill',
+                'icon_color' => '#f38020'
+            ],
+
+            // Serverless
+            [
+                'category' => 'Serverless',
+                'name' => 'Cloudflare Workers',
+                'icon_class' => 'bi bi-cloud-lightning-fill',
+                'icon_color' => '#f38020'
+            ],
+
+            // Web Server
+            [
+                'category' => 'Web Server',
+                'name' => 'Apache',
+                'icon_class' => 'bi bi-fire',
+                'icon_color' => '#d22128'
+            ],
+
+            // Code Editor
+            [
+                'category' => 'Code Editor',
+                'name' => 'Visual Studio Code',
+                'icon_class' => 'bi bi-code-square',
+                'icon_color' => '#007acc'
             ],
         ];
 
-        foreach ($data as $item) {
-            TechStack::updateOrCreate(
-                ['slug' => $item['slug']],
-                $item
-            );
+        foreach ($items as $item) {
+            TechStack::create([
+                'category' => $item['category'],
+                'name' => $item['name'],
+                'slug' => Str::slug($item['name']),
+                'icon_class' => $item['icon_class'],
+                'icon_color' => $item['icon_color'],
+            ]);
         }
     }
 }

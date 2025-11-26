@@ -49,12 +49,12 @@
         </a>
 
         {{-- BLOG --}}
-        <a href="{{ route('blog.index') }}" class="nav-item {{ request()->routeIs('blog.index') ? 'active' : '' }}"
+        <a href="{{ route('publication.index') }}" class="nav-item {{ request()->routeIs('publication.index') ? 'active' : '' }}"
             onclick="closeMobileMenu(event)">
             <i class="bi bi-rss"></i>
-            <span data-lang="nav-blog">Blog</span>
+            <span data-lang="nav-blog">Publication</span>
 
-            @if (request()->routeIs('blog.index'))
+            @if (request()->routeIs('publication.index'))
                 <i class="bi bi-arrow-right nav-arrow"></i>
             @endif
         </a>

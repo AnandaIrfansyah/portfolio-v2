@@ -10,6 +10,7 @@ class TechStack extends Model
     protected $fillable = [
         'name',
         'slug',
+        'icon_color',
         'icon_class',
         'category',
     ];

@@ -19,7 +19,7 @@ class TechStackController extends Controller
             $query->where('name', 'like', "%{$search}%")
                 ->orWhere('slug', 'like', "%{$search}%");
         })
-            ->orderBy('id', 'DESC')
+            ->latest()
             ->paginate($sort)
             ->appends(request()->query());
 
@@ -31,36 +31,27 @@ class TechStackController extends Controller
         $validation = Validator::make($request->all(), [
             "name" => "required|string|max:255",
             "icon_class" => "required|string|max:255",
-            "category" => "nullable|string|max:255"
-        ], [
-            'required' => ':attribute wajib diisi.',
-        ]);
-
-        $validation->setAttributeNames([
-            'name' => 'Nama',
-            'icon_class' => 'Icon',
-            'category' => 'Kategori'
         ]);
 
         if ($validation->fails()) {
-            return response()->json(['status' => false, 'errors' => $validation->errors()]);
+            return response()->json(['errors' => $validation->errors()]);
         }
 
-        TechStack::create([
-            'name' => $request->name,
-            'slug' => Str::slug($request->name),
-            'icon_class' => $request->icon_class,
-            'category' => $request->category
-        ]);
+        TechStack::create($request->only([
+            'name',
+            'icon_class',
+            'icon_color',
+            'category'
+        ]));
 
-        return response()->json(['status' => true, 'message' => 'Berhasil menyimpan data.']);
+        return response()->json(['message' => 'Berhasil menyimpan data.']);
     }
 
     public function show($id)
     {
         $data = TechStack::find($id);
 
-        if (!$data) return response()->json(['status' => false, 'message' => 'Data tidak ditemukan']);
+        if (!$data) return response()->json(['status' => false]);
 
         return response()->json(['status' => true, 'data' => $data]);
     }
@@ -70,32 +61,32 @@ class TechStackController extends Controller
         $validation = Validator::make($request->all(), [
             "name" => "required|string|max:255",
             "icon_class" => "required|string|max:255",
-            "category" => "nullable|string|max:255"
         ]);
 
         if ($validation->fails()) {
-            return response()->json(['status' => false, 'errors' => $validation->errors()]);
+            return response()->json(['errors' => $validation->errors()]);
         }
 
         $data = TechStack::find($id);
-        if (!$data) return response()->json(['status' => false, 'message' => 'Data tidak ditemukan']);
+        if (!$data) return response()->json(['status' => false]);
 
-        $data->update([
-            'name' => $request->name,
-            'slug' => Str::slug($request->name),
-            'icon_class' => $request->icon_class,
-            'category' => $request->category
-        ]);
+        $data->update($request->only([
+            'name',
+            'icon_class',
+            'icon_color',
+            'category'
+        ]));
 
-        return response()->json(['status' => true, 'message' => 'Berhasil memperbarui data.']);
+        return response()->json(['message' => 'Berhasil memperbarui data.']);
     }
 
     public function destroy($id)
     {
         $data = TechStack::find($id);
-        if (!$data) return response()->json(['status' => false, 'message' => 'Data tidak ditemukan']);
+        if (!$data) return response()->json(['status' => false]);
 
         $data->delete();
-        return response()->json(['status' => true, 'message' => 'Berhasil menghapus data.']);
+
+        return response()->json(['message' => 'Berhasil menghapus data.']);
     }
 }
