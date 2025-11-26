@@ -13,16 +13,22 @@
                     <i class="fas fa-home"></i> <span>Dashboard</span>
                 </a>
             </li>
-            <li class="menu-header">Publications</li>
-            <li class="nav-item {{ Request::is('publications') ? 'active' : '' }}">
-                <a href="{{ route('publications.index') }}" class="nav-link">
-                    <i class="fas fa-home"></i> <span>Research & Publications</span>
+            <li class="menu-header">Menu</li>
+            <li class="nav-item {{ Request::is('project') ? 'active' : '' }}">
+                <a href="{{ route('project.index') }}" class="nav-link">
+                    <i class="fas fa-laptop-code"></i> <span>Projects</span>
                 </a>
             </li>
+            <li class="nav-item {{ Request::is('publications') ? 'active' : '' }}">
+                <a href="{{ route('publications.index') }}" class="nav-link">
+                    <i class="fas fa-book"></i> <span>Research & Publications</span>
+                </a>
+            </li>
+
             <li class="menu-header">Setting</li>
             <li class="nav-item {{ Request::is('setting/tech-stack') ? 'active' : '' }}">
                 <a href="{{ route('tech-stack.index') }}" class="nav-link">
-                    <i class="fas fa-home"></i> <span>Tech Stack</span>
+                    <i class="fas fa-tools"></i> <span>Tech Stack</span>
                 </a>
             </li>
         </ul>

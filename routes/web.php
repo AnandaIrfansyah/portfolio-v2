@@ -61,7 +61,6 @@ Route::middleware(['auth', 'role:author'])->group(
         });
 
         Route::prefix('setting')->group(function () {
-
             Route::prefix('tech-stack')->group(function () {
                 Route::get('/', [TechStackController::class, 'index'])->name('tech-stack.index');
                 Route::post('/store', [TechStackController::class, 'store'])->name('tech-stack.store');

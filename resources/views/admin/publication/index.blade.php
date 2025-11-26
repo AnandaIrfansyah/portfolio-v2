@@ -35,15 +35,75 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0.5rem;
+            padding: 0.75rem;
             border: 1px solid #dee2e6;
-            border-radius: 0.25rem;
-            margin-bottom: 0.5rem;
-            background: #f8f9fa;
+            border-radius: 0.375rem;
+            margin-bottom: 0.75rem;
+            background: #fff;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
         }
 
         .author-order-input {
-            width: 60px;
+            width: 70px;
+            text-align: center;
+        }
+
+        .author-item:hover {
+            background: #f8f9fa;
+            border-color: #adb5bd;
+        }
+
+        .author-info {
+            flex: 1;
+        }
+
+        .author-info strong {
+            font-size: 0.95rem;
+            color: #495057;
+        }
+
+        .author-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .author-order-label {
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-right: 0.25rem;
+        }
+
+        /* Modal auto-height based on content */
+        #publication-modal .modal-dialog {
+            display: flex;
+            align-items: center;
+            min-height: calc(100vh - 3.5rem);
+        }
+
+        #publication-modal .modal-content {
+            width: 100%;
+            max-height: calc(100vh - 3.5rem);
+            display: flex;
+            flex-direction: column;
+        }
+
+        #publication-modal .modal-body {
+            flex: 1;
+            overflow-y: auto;
+            max-height: calc(100vh - 200px);
+        }
+
+        #publication-modal .modal-footer {
+            flex-shrink: 0;
+            border-top: 1px solid #dee2e6;
+        }
+
+        /* Authors & Tags list dengan scroll jika panjang */
+        #authorsList,
+        #tagsList {
+            max-height: 300px;
+            overflow-y: auto;
         }
     </style>
 @endpush
@@ -240,7 +300,7 @@
 @push('modal')
     {{-- MODAL CREATE/EDIT --}}
     <div class="modal fade" id="publication-modal" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable" role="document">
+        <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title"></h5>
@@ -397,19 +457,23 @@
                             <div class="tab-pane fade" id="authors-section" role="tabpanel">
                                 {{-- Authors Section --}}
                                 <div class="form-group">
-                                    <label>Authors <span class="text-danger">*</span></label>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <label>Authors <span class="text-danger">*</span></label>
+                                        <div class="input-group-append mb-2" style="position: static;">
+                                            <button type="button" class="btn btn-primary btn-sm mr-2"
+                                                onclick="addAuthor()">
+                                                <i class="fas fa-plus"></i> Add
+                                            </button>
+                                            <button type="button" class="btn btn-success btn-sm"
+                                                onclick="openAuthorModal()">
+                                                <i class="fas fa-user-plus"></i> New
+                                            </button>
+                                        </div>
+                                    </div>
                                     <div class="input-group mb-2">
                                         <select id="authorSelect" class="form-control select2">
                                             <option value="">Pilih Author...</option>
                                         </select>
-                                        <div class="input-group-append">
-                                            <button type="button" class="btn btn-primary" onclick="addAuthor()">
-                                                <i class="fas fa-plus"></i> Add
-                                            </button>
-                                            <button type="button" class="btn btn-success" onclick="openAuthorModal()">
-                                                <i class="fas fa-user-plus"></i> New
-                                            </button>
-                                        </div>
                                     </div>
                                     <span class="text-danger error_authors"></span>
                                     <div id="authorsList" style="max-height: 300px; overflow-y: auto;"></div>
@@ -419,18 +483,26 @@
 
                                 {{-- Tags Section --}}
                                 <div class="form-group">
-                                    <label>Tags</label>
-                                    <div class="input-group mb-2">
-                                        <select id="tagSelect" class="form-control select2" multiple>
-                                        </select>
-                                        <div class="input-group-append">
-                                            <button type="button" class="btn btn-success" onclick="openTagModal()">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <label>Tags</label>
+                                        <div class="input-group-append mb-2" style="position: static;">
+                                            <button type="button" class="btn btn-primary btn-sm mr-2"
+                                                onclick="addTag()">
+                                                <i class="fas fa-plus"></i> Add
+                                            </button>
+                                            <button type="button" class="btn btn-success btn-sm"
+                                                onclick="openTagModal()">
                                                 <i class="fas fa-tag"></i> New Tag
                                             </button>
                                         </div>
                                     </div>
+                                    <div class="input-group mb-2">
+                                        <select id="tagSelect" class="form-control select2">
+                                            <option value="">Pilih Tag...</option>
+                                        </select>
+                                    </div>
                                     <span class="text-danger error_tags"></span>
-                                    <small class="text-muted">Gunakan Ctrl/Cmd untuk memilih multiple tags</small>
+                                    <div id="tagsList" style="max-height: 300px; overflow-y: auto;"></div>
                                 </div>
                             </div>
 
@@ -584,11 +656,16 @@
 
         const BASE = "{{ route('publications.index') }}";
         let selectedAuthors = [];
+        let selectedTags = [];
 
         // Initialize Select2
         $(document).ready(function() {
             loadAuthors();
             loadTags();
+
+            $('#publicationTabs a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+                $('#publication-modal').modal('handleUpdate');
+            }); 
         });
 
         // Sort & Filter
@@ -620,17 +697,74 @@
                 url: "{{ route('tags.list') }}",
                 method: "GET",
                 success: function(resp) {
-                    let options = '';
+                    let options = '<option value="">Pilih Tag...</option>';
                     resp.data.forEach(tag => {
                         options += `<option value="${tag.id}">${tag.name}</option>`;
                     });
-                    $("#tagSelect").html(options).select2({
-                        theme: 'bootstrap-5',
-                        placeholder: 'Pilih Tags...',
-                        allowClear: true
-                    });
+                    $("#tagSelect").html(options);
                 }
             });
+        }
+
+        function addTag() {
+            let tagId = $("#tagSelect").val();
+            let tagName = $("#tagSelect option:selected").text();
+
+            if (!tagId) {
+                Toast.fire({
+                    icon: "error",
+                    title: "Pilih tag terlebih dahulu"
+                });
+                return;
+            }
+
+            // Check if already added
+            if (selectedTags.find(t => t.id == tagId)) {
+                Toast.fire({
+                    icon: "error",
+                    title: "Tag sudah ditambahkan"
+                });
+                return;
+            }
+
+            selectedTags.push({
+                id: tagId,
+                name: tagName
+            });
+
+            renderTagsList();
+        }
+
+        function renderTagsList() {
+            let html = '';
+            selectedTags.forEach((tag, index) => {
+                html += `
+                    <div class="author-item">
+                        <div class="author-info">
+                            <span class="badge badge-info" style="font-size: 0.9rem; padding: 0.5rem 0.75rem;">
+                                <i class="fas fa-tag mr-1"></i> ${tag.name}
+                            </span>
+                        </div>
+                        <div class="author-actions">
+                            <button type="button" class="btn btn-danger btn-sm" onclick="removeTag(${index})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            if (selectedTags.length === 0) {
+                html = '<div class="alert alert-info mb-0">Belum ada tag yang ditambahkan.</div>';
+            }
+
+            $("#tagsList").html(html);
+        }
+
+        // Remove Tag
+        function removeTag(index) {
+            selectedTags.splice(index, 1);
+            renderTagsList();
         }
 
         // Open Create Modal
@@ -642,9 +776,10 @@
             $("#form")[0].reset();
             $("#is_featured").prop("checked", false);
             selectedAuthors = [];
+            selectedTags = []; // TAMBAHKAN INI
             $("#authorsList").html("");
+            $("#tagsList").html(""); // TAMBAHKAN INI
             $("#imagePreview").html("");
-            $("#tagSelect").val(null).trigger('change');
             clearErrors();
         }
 
@@ -684,21 +819,27 @@
             let html = '';
             selectedAuthors.forEach((author, index) => {
                 html += `
-                            <div class="author-item">
-                                <div>
-                                    <strong>${author.name}</strong>
-                                </div>
-                                <div>
-                                    <input type="number" class="form-control author-order-input"
-                                        value="${author.order}" min="1"
-                                        onchange="updateAuthorOrder(${index}, this.value)">
-                                    <button type="button" class="btn btn-danger btn-sm ml-2" onclick="removeAuthor(${index})">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        `;
+            <div class="author-item">
+                <div class="author-info">
+                    <strong>${author.name}</strong>
+                </div>
+                <div class="author-actions">
+                    <span class="author-order-label">Order:</span>
+                    <input type="number" class="form-control form-control-sm author-order-input"
+                        value="${author.order}" min="1"
+                        onchange="updateAuthorOrder(${index}, this.value)">
+                    <button type="button" class="btn btn-danger btn-sm" onclick="removeAuthor(${index})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        `;
             });
+
+            if (selectedAuthors.length === 0) {
+                html = '<div class="alert alert-info mb-0">Belum ada author yang ditambahkan.</div>';
+            }
+
             $("#authorsList").html(html);
         }
 
@@ -754,12 +895,9 @@
             });
 
             // Tags
-            let tags = $("#tagSelect").val();
-            if (tags) {
-                tags.forEach((tag, index) => {
-                    formData.append(`tags[${index}]`, tag);
-                });
-            }
+            selectedTags.forEach((tag, index) => {
+                formData.append(`tags[${index}]`, tag.id);
+            });
 
             // Image
             if ($("#featured_image")[0].files[0]) {
@@ -836,8 +974,11 @@
                     renderAuthorsList();
 
                     // Load tags
-                    let tagIds = d.tags.map(tag => tag.id.toString());
-                    $("#tagSelect").val(tagIds).trigger('change');
+                    selectedTags = d.tags.map(tag => ({
+                        id: tag.id,
+                        name: tag.name
+                    }));
+                    renderTagsList();
 
                     // Load image preview
                     if (d.featured_image) {
@@ -883,11 +1024,11 @@
                             <h5>Abstract</h5>
                             <p>${d.abstract}</p>
                             ${d.tags.length > 0 ? `
-                                                            <div class="mt-3">
-                                                                <strong>Tags:</strong><br>
-                                                                ${d.tags.map(t => `<span class="badge badge-info">${t.name}</span>`).join(' ')}
-                                                            </div>
-                                                        ` : ''}
+                                                                                                                                <div class="mt-3">
+                                                                                                                                    <strong>Tags:</strong><br>
+                                                                                                                                    ${d.tags.map(t => `<span class="badge badge-info">${t.name}</span>`).join(' ')}
+                                                                                                                                </div>
+                                                                                                                            ` : ''}
                         </div>
                     </div>
                 `;
