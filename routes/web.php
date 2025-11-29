@@ -35,6 +35,7 @@ Route::prefix('projects')->group(function () {
 });
 Route::prefix('publication')->group(function () {
     Route::get('/', [PublicationController::class, 'index'])->name('publication.index');
+    Route::get('/{slug}', [PublicationController::class, 'show'])->name('publication.show');
 });
 Route::prefix('about')->group(function () {
     Route::get('/', [AboutController::class, 'index'])->name('about.index');

@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
         integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{{ asset('admin/library/summernote/dist/summernote-bs4.css') }}">
 
     @stack('style')
 
@@ -63,7 +64,8 @@
     <script src="{{ asset('admin/library/jquery.nicescroll/dist/jquery.nicescroll.min.js') }}"></script>
     <script src="{{ asset('admin/library/moment/min/moment.min.js') }}"></script>
     <script src="{{ asset('admin/js/stisla.js') }}"></script>
-    <script src="{{ asset('library/select2/dist/js/select2.full.min.js') }}"></script>
+    <script src="{{ asset('admin/library/select2/dist/js/select2.full.min.js') }}"></script>
+    <script src="{{ asset('admin/library/summernote/dist/summernote-bs4.js') }}"></script>
 
     @stack('scripts')
 

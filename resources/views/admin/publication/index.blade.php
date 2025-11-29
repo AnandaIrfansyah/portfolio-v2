@@ -105,6 +105,86 @@
             max-height: 300px;
             overflow-y: auto;
         }
+
+        /* Modal View Detail - 2 Column Layout */
+        #view-modal .modal-xl {
+            max-width: 1200px;
+        }
+
+        #view-modal .modal-body {
+            padding: 0 !important;
+        }
+
+        .publication-detail .detail-header h4 {
+            color: #2c3e50;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .publication-detail .card {
+            border: 1px solid #e0e0e0;
+        }
+
+        .publication-detail .card-header {
+            background: #f8f9fa;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .publication-detail h5 {
+            color: #34495e;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .publication-detail .text-justify {
+            color: #555;
+        }
+
+        .publication-detail .badge {
+            font-size: 0.8rem;
+            padding: 0.35rem 0.65rem;
+            font-weight: 500;
+        }
+
+        .publication-detail img {
+            border: 1px solid #e0e0e0;
+        }
+
+        .publication-detail a.btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        /* Right column styling */
+        .publication-detail .col-md-4.bg-light {
+            background-color: #f8f9fa !important;
+        }
+
+        .publication-detail .card-body small.text-muted {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+        }
+
+        /* Scrollbar untuk modal body */
+        #viewContent::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #viewContent::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        #viewContent::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+
+        #viewContent::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
     </style>
 @endpush
 
@@ -225,15 +305,13 @@
                                                 @if ($item->venue)
                                                     <br><small class="text-muted">{{ $item->venue }}</small>
                                                 @endif
-                                                @if ($item->tags->count() > 0)
-                                                    <br>
-                                                    @foreach ($item->tags as $tag)
-                                                        <span class="badge badge-info tag-badge">{{ $tag->name }}</span>
-                                                    @endforeach
-                                                @endif
+
                                             </td>
                                             <td class="author-list">
-                                                {{ $item->authors_string }}
+                                                {{ $item->authors->first()->name ?? 'Anonymous' }}
+                                                @if ($item->authors->count() > 1)
+                                                    et al.
+                                                @endif
                                             </td>
                                             <td class="text-center">
                                                 <span class="badge badge-secondary publication-type-badge">
@@ -263,15 +341,15 @@
                                                 @endif
                                             </td>
                                             <td class="text-center">
-                                                <button class="btn btn-info btn-sm"
+                                                <button class="btn btn-info btn-sm mt-1"
                                                     onclick="viewModal('{{ $item->id }}')">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
-                                                <button class="btn btn-warning btn-sm"
+                                                <button class="btn btn-warning btn-sm mt-1"
                                                     onclick="editModal('{{ $item->id }}')">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
-                                                <button class="btn btn-danger btn-sm"
+                                                <button class="btn btn-danger btn-sm mt-1"
                                                     onclick="deleteItem('{{ $item->id }}')">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
@@ -440,14 +518,14 @@
                                 {{-- Abstract --}}
                                 <div class="form-group">
                                     <label>Abstract <span class="text-danger">*</span></label>
-                                    <textarea id="abstract" class="form-control" rows="5" placeholder="Ringkasan publikasi..."></textarea>
+                                    <textarea id="abstract" class="form-control summernote-simple" placeholder="Ringkasan publikasi..."></textarea>
                                     <span class="text-danger error_abstract"></span>
                                 </div>
 
                                 {{-- Content --}}
                                 <div class="form-group">
                                     <label>Full Content (Optional)</label>
-                                    <textarea id="content" class="form-control" rows="8" placeholder="Isi lengkap publikasi (bisa HTML)..."></textarea>
+                                    <textarea id="content" class="form-control summernote-simple" placeholder="Isi lengkap publikasi (bisa HTML)..."></textarea>
                                     <span class="text-danger error_content"></span>
                                     <small class="text-muted">Tip: Kamu bisa pakai HTML tags untuk formatting</small>
                                 </div>
@@ -563,19 +641,21 @@
 
     {{-- MODAL VIEW DETAIL --}}
     <div class="modal fade" id="view-modal" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
+        <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
             <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title">
-                        <i class="fas fa-file-alt"></i> Publication Detail
+                <div class="modal-header text-white">
+                    <h5 class="modal-title text-primary mb-2">
+                        Publication Detail
                     </h5>
-                    <button class="close text-white" data-dismiss="modal"><span>&times;</span></button>
+                    <button class="close text-primary" data-dismiss="modal"><span>&times;</span></button>
                 </div>
-                <div class="modal-body" id="viewContent">
+                <div class="modal-body p-0" id="viewContent" style="max-height: 75vh; overflow-y: auto;">
                     <!-- Content will be loaded here -->
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button class="btn btn-secondary" data-dismiss="modal">
+                        <i class="fas fa-times"></i> Close
+                    </button>
                 </div>
             </div>
         </div>
@@ -665,7 +745,7 @@
 
             $('#publicationTabs a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
                 $('#publication-modal').modal('handleUpdate');
-            }); 
+            });
         });
 
         // Sort & Filter
@@ -819,21 +899,21 @@
             let html = '';
             selectedAuthors.forEach((author, index) => {
                 html += `
-            <div class="author-item">
-                <div class="author-info">
-                    <strong>${author.name}</strong>
-                </div>
-                <div class="author-actions">
-                    <span class="author-order-label">Order:</span>
-                    <input type="number" class="form-control form-control-sm author-order-input"
-                        value="${author.order}" min="1"
-                        onchange="updateAuthorOrder(${index}, this.value)">
-                    <button type="button" class="btn btn-danger btn-sm" onclick="removeAuthor(${index})">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            </div>
-        `;
+                    <div class="author-item">
+                        <div class="author-info">
+                            <strong>${author.name}</strong>
+                        </div>
+                        <div class="author-actions">
+                            <span class="author-order-label">Order:</span>
+                            <input type="number" class="form-control form-control-sm author-order-input"
+                                value="${author.order}" min="1"
+                                onchange="updateAuthorOrder(${index}, this.value)">
+                            <button type="button" class="btn btn-danger btn-sm" onclick="removeAuthor(${index})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
             });
 
             if (selectedAuthors.length === 0) {
@@ -869,6 +949,9 @@
 
         // Store/Update Publication
         $("#storeBtn").click(function() {
+            // Disable button untuk prevent double submit
+            $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Menyimpan...');
+
             let type = $("#type").val();
             let id = $("#id").val();
             let url = type === "create" ? "{{ route('publications.store') }}" : `/publications/${id}/update`;
@@ -888,13 +971,15 @@
             formData.append('is_featured', $("#is_featured").is(':checked') ? 1 : 0);
             formData.append('citation_count', $("#citation_count").val() || 0);
 
-            // Authors
+            // Authors - PASTIKAN FORMAT BENAR
+            console.log('Selected Authors:', selectedAuthors); // Debug
             selectedAuthors.forEach((author, index) => {
                 formData.append(`authors[${index}][id]`, author.id);
                 formData.append(`authors[${index}][order]`, author.order);
             });
 
-            // Tags
+            // Tags - PASTIKAN FORMAT BENAR
+            console.log('Selected Tags:', selectedTags); // Debug
             selectedTags.forEach((tag, index) => {
                 formData.append(`tags[${index}]`, tag.id);
             });
@@ -909,6 +994,11 @@
                 formData.append('_method', 'PUT');
             }
 
+            // Debug: Log formData
+            for (let pair of formData.entries()) {
+                console.log(pair[0] + ': ' + pair[1]);
+            }
+
             $.ajax({
                 url: url,
                 method: "POST",
@@ -916,21 +1006,48 @@
                 processData: false,
                 contentType: false,
                 success: function(resp) {
+                    console.log('Success Response:', resp);
                     $("#publication-modal").modal("hide");
                     Toast.fire({
                         icon: "success",
-                        title: resp.message
+                        title: resp.message || 'Berhasil menyimpan publikasi'
                     });
-                    setTimeout(() => location.reload(), 800);
+                    setTimeout(() => location.reload(), 1000);
                 },
                 error: function(xhr) {
+                    console.error('Error Response:', xhr);
+
+                    // Re-enable button
+                    $("#storeBtn").prop('disabled', false).html('<i class="fas fa-save"></i> Simpan');
+
                     if (xhr.status === 422) {
+                        // Validation errors
                         showErrors(xhr.responseJSON.errors);
                         Toast.fire({
                             icon: "error",
                             title: "Periksa input kamu."
                         });
+                    } else if (xhr.status === 500) {
+                        // Server error
+                        Toast.fire({
+                            icon: "error",
+                            title: xhr.responseJSON?.message || "Terjadi kesalahan server"
+                        });
+                    } else {
+                        // Other errors
+                        Toast.fire({
+                            icon: "error",
+                            title: "Terjadi kesalahan: " + (xhr.responseJSON?.message || xhr
+                                .statusText)
+                        });
                     }
+                },
+                complete: function() {
+                    // Re-enable button jika belum
+                    setTimeout(() => {
+                        $("#storeBtn").prop('disabled', false).html(
+                            '<i class="fas fa-save"></i> Simpan');
+                    }, 500);
                 }
             });
         });
@@ -948,7 +1065,6 @@
                         });
                         return;
                     }
-
                     let d = resp.data;
                     $("#id").val(d.id);
                     $("#type").val("update");
@@ -957,14 +1073,18 @@
                     $("#venue").val(d.venue);
                     $("#year").val(d.year);
                     $("#month").val(d.month);
-                    $("#abstract").val(d.abstract);
-                    $("#content").val(d.content);
+
+                    // ✅ GUNAKAN .summernote('code') untuk set konten
+                    $("#abstract").summernote('code', d.abstract || '');
+                    $("#content").summernote('code', d.content || '');
+
                     $("#doi").val(d.doi);
                     $("#url").val(d.url);
                     $("#pdf_url").val(d.pdf_url);
                     $("#status").val(d.status);
                     $("#citation_count").val(d.citation_count);
                     $("#is_featured").prop("checked", d.is_featured);
+
                     // Load authors
                     selectedAuthors = d.authors.map(author => ({
                         id: author.id,
@@ -995,6 +1115,18 @@
 
         // View Modal
         function viewModal(id) {
+            // ✅ RESET TITLE MODAL
+            $("#view-modal .modal-title").html('Publication Detail');
+
+            // Show loading
+            $("#viewContent").html(`
+                <div class="text-center py-5">
+                    <i class="fas fa-spinner fa-spin fa-3x text-primary"></i>
+                    <p class="mt-3">Loading...</p>
+                </div>
+            `);
+            $("#view-modal").modal("show");
+
             $.ajax({
                 url: BASE + "/" + id + "/show",
                 method: "GET",
@@ -1004,36 +1136,166 @@
                             icon: "error",
                             title: "Data tidak ditemukan"
                         });
+                        $("#view-modal").modal("hide");
                         return;
                     }
 
                     let d = resp.data;
+
+                    // Badge untuk status
+                    const statusColors = {
+                        'published': 'success',
+                        'accepted': 'info',
+                        'under_review': 'warning',
+                        'preprint': 'secondary'
+                    };
+                    let statusBadge =
+                        `<span class="badge badge-${statusColors[d.status] || 'secondary'}">${d.status.replace('_', ' ').toUpperCase()}</span>`;
+                    let typeBadge =
+                        `<span class="badge badge-secondary">${d.publication_type.replace('_', ' ').toUpperCase()}</span>`;
+                    let featuredStar = d.is_featured ? '<i class="fas fa-star text-warning ml-2"></i>' : '';
+
+                    // Authors & Tags
+                    let authorsList = d.authors.map(a => a.name).join(', ') ||
+                        '<span class="text-muted">No authors</span>';
+                    let tagsList = '';
+                    if (d.tags && d.tags.length > 0) {
+                        tagsList = d.tags.map(t =>
+                            `<span class="badge badge-info mr-1 mb-1"><i class="fas fa-tag mr-1"></i>${t.name}</span>`
+                        ).join(' ');
+                    } else {
+                        tagsList = '<span class="text-muted">No tags</span>';
+                    }
+
                     let html = `
-                    <div class="row">
-                        <div class="col-md-12">
-                            <h4>${d.title}</h4>
-                            <p class="text-muted">
-                                <strong>Authors:</strong> ${d.authors.map(a => a.name).join(', ')}<br>
-                                <strong>Type:</strong> ${d.publication_type}<br>
-                                <strong>Year:</strong> ${d.formatted_date || d.year}<br>
-                                ${d.venue ? `<strong>Venue:</strong> ${d.venue}<br>` : ''}
-                                ${d.doi ? `<strong>DOI:</strong> ${d.doi}<br>` : ''}
-                                <strong>Status:</strong> ${d.status}
-                            </p>
-                            ${d.featured_image ? `<img src="/storage/${d.featured_image}" class="img-fluid mb-3">` : ''}
-                            <h5>Abstract</h5>
-                            <p>${d.abstract}</p>
-                            ${d.tags.length > 0 ? `
-                                                                                                                                <div class="mt-3">
-                                                                                                                                    <strong>Tags:</strong><br>
-                                                                                                                                    ${d.tags.map(t => `<span class="badge badge-info">${t.name}</span>`).join(' ')}
-                                                                                                                                </div>
-                                                                                                                            ` : ''}
+                <div class="publication-detail">
+                    <!-- Header Section -->
+                    <div class="detail-header bg-light p-4 border-bottom">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                ${typeBadge}
+                                ${statusBadge}
+                                ${featuredStar}
+                            </div>
+                            <div class="text-muted">
+                                <small><i class="fas fa-eye mr-1"></i> ${d.views || 0} views</small>
+                                ${d.citation_count ? `<small class="ml-3"><i class="fas fa-quote-right mr-1"></i> ${d.citation_count} citations</small>` : ''}
+                            </div>
+                        </div>
+                        <h4 class="mb-0">${d.title}</h4>
+                    </div>
+
+                    <!-- Main Content: 2 Column Layout -->
+                    <div class="row m-0">
+                        <!-- LEFT COLUMN -->
+                        <div class="col-md-8 p-4 border-right">
+                            <!-- Featured Image -->
+                            ${d.featured_image ? `
+                                            <div class="mb-4">
+                                                <img src="/storage/${d.featured_image}" class="img-fluid rounded shadow-sm" alt="${d.title}">
+                                            </div>
+                                        ` : ''}
+
+                            <!-- Abstract Section -->
+                            <div class="mb-4">
+                                <h5 class="border-bottom pb-2 mb-3">
+                                    <i class="fas fa-file-alt text-primary mr-2"></i>Abstract
+                                </h5>
+                                <div class="text-justify" style="line-height: 1.8; color: #555;">
+                                    ${d.abstract || '<span class="text-muted">No abstract available</span>'}
+                                </div>
+                            </div>
+
+                            <!-- Full Content Section (if exists) -->
+                            ${d.content ? `
+                                            <div class="mb-4">
+                                                <h5 class="border-bottom pb-2 mb-3">
+                                                    <i class="fas fa-align-left text-primary mr-2"></i>Full Content
+                                                </h5>
+                                                <div class="text-justify" style="line-height: 1.8; color: #555;">
+                                                    ${d.content}
+                                                </div>
+                                            </div>
+                                        ` : ''}
+                        </div>
+
+                        <!-- RIGHT COLUMN -->
+                        <div class="col-md-4 p-4 bg-light">
+                            <!-- Meta Information Card -->
+                            <div class="card mb-3 shadow-sm">
+                                <div class="card-header bg-white">
+                                    <h6 class="mb-0"><i class="fas fa-info-circle text-primary mr-2"></i>Publication Info</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <small class="text-muted d-block mb-1"><i class="fas fa-users mr-1"></i> Authors:</small>
+                                        <p class="mb-0" style="font-size: 0.9rem;">${authorsList}</p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <small class="text-muted d-block mb-1"><i class="fas fa-calendar mr-1"></i> Published:</small>
+                                        <p class="mb-0" style="font-size: 0.9rem;">${d.formatted_date || d.year}</p>
+                                    </div>
+                                    ${d.venue ? `
+                                                    <div class="mb-3">
+                                                        <small class="text-muted d-block mb-1"><i class="fas fa-building mr-1"></i> Venue:</small>
+                                                        <p class="mb-0" style="font-size: 0.9rem;">${d.venue}</p>
+                                                    </div>
+                                                ` : ''}
+                                    ${d.doi ? `
+                                                    <div class="mb-0">
+                                                        <small class="text-muted d-block mb-1"><i class="fas fa-fingerprint mr-1"></i> DOI:</small>
+                                                        <a href="https://doi.org/${d.doi}" target="_blank" class="text-info" style="font-size: 0.85rem; word-break: break-all;">
+                                                            ${d.doi} <i class="fas fa-external-link-alt ml-1"></i>
+                                                        </a>
+                                                    </div>
+                                                ` : ''}
+                                </div>
+                            </div>
+
+                            <!-- Tags Card -->
+                            <div class="card mb-3 shadow-sm">
+                                <div class="card-header bg-white">
+                                    <h6 class="mb-0"><i class="fas fa-tags text-primary mr-2"></i>Tags</h6>
+                                </div>
+                                <div class="card-body">
+                                    ${tagsList}
+                                </div>
+                            </div>
+
+                            <!-- Links Card -->
+                            ${(d.url || d.pdf_url) ? `
+                                            <div class="card shadow-sm">
+                                                <div class="card-header bg-white">
+                                                    <h6 class="mb-0"><i class="fas fa-link text-primary mr-2"></i>External Links</h6>
+                                                </div>
+                                                <div class="card-body">
+                                                    ${d.url ? `
+                                            <a href="${d.url}" target="_blank" class="btn btn-sm btn-outline-primary btn-block mb-2">
+                                                <i class="fas fa-globe mr-1"></i> View Publication
+                                            </a>
+                                        ` : ''}
+                                                    ${d.pdf_url ? `
+                                            <a href="${d.pdf_url}" target="_blank" class="btn btn-sm btn-outline-danger btn-block">
+                                                <i class="fas fa-file-pdf mr-1"></i> Download PDF
+                                            </a>
+                                        ` : ''}
+                                                </div>
+                                            </div>
+                                        ` : ''}
                         </div>
                     </div>
-                `;
+                </div>
+            `;
+
                     $("#viewContent").html(html);
-                    $("#view-modal").modal("show");
+                },
+                error: function(xhr) {
+                    $("#viewContent").html(`
+                <div class="alert alert-danger m-4">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    Failed to load publication details.
+                </div>
+            `);
                 }
             });
         }
@@ -1134,7 +1396,7 @@
         function showErrors(errors) {
             clearErrors();
             $.each(errors, function(key, value) {
-                $(`.error_${key}`).html(value[0]);
+                $(`.error_${key}`).html(value[0]); // ✅ Tambahkan dot (.)
             });
         }
 

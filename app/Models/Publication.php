@@ -58,10 +58,9 @@ class Publication extends Model
         });
     }
 
-
     public function authors()
     {
-        return $this->belongsToMany(Authors::class, 'publication_authors')
+        return $this->belongsToMany(Authors::class, 'publication_authors', 'publication_id', 'author_id')
             ->withPivot('author_order')
             ->withTimestamps()
             ->orderBy('author_order');
@@ -69,7 +68,12 @@ class Publication extends Model
 
     public function tags()
     {
-        return $this->belongsToMany(PublicationTag::class, 'publication_tag_pivots');
+        return $this->belongsToMany(
+            PublicationTag::class,
+            'publication_tag_pivots',  // nama tabel pivot
+            'publication_id',            // foreign key untuk Publication
+            'tag_id'                     // foreign key untuk PublicationTag (BUKAN publication_tag_id!)
+        );
     }
 
 

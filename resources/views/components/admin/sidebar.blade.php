@@ -21,7 +21,7 @@
             </li>
             <li class="nav-item {{ Request::is('publications') ? 'active' : '' }}">
                 <a href="{{ route('publications.index') }}" class="nav-link">
-                    <i class="fas fa-book"></i> <span>Research & Publications</span>
+                    <i class="fas fa-book"></i> <span>Publications</span>
                 </a>
             </li>
 

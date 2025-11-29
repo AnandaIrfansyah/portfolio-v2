@@ -44,7 +44,12 @@ class PublicationTag extends Model
 
     public function publications()
     {
-        return $this->belongsToMany(Publication::class, 'publication_tag_pivots', 'tag_id', 'publication_id') // ✅ Ganti ke publication_tag_pivots
+        return $this->belongsToMany(
+            Publication::class,
+            'publication_tag_pivots',  // nama tabel pivot
+            'tag_id',                   // foreign key untuk PublicationTag
+            'publication_id'            // foreign key untuk Publication
+        )
             ->withTimestamps()
             ->orderBy('year', 'desc')
             ->orderBy('month', 'desc');

@@ -51,9 +51,9 @@
                     <div class="section-header">
                         <h2 class="section-title">
                             <span data-lang="section-latest">Latest</span>
-                            <span data-lang="section-blogs">Publications</span>
+                            <span data-lang="section-publications">Publications</span>
                         </h2>
-                        <a href="#" class="view-all-link">
+                        <a href="{{ route('publication.index') }}" class="view-all-link">
                             <span data-lang="view-all">View All</span>
                             <i class="bi bi-arrow-right"></i>
                         </a>
@@ -63,232 +63,131 @@
 
             <!-- Desktop Grid View -->
             <div class="row g-4 d-none d-lg-flex">
-                <div class="col-lg-4 col-md-6 col-12">
-                    <a href="#" class="blog-card" onclick="handleCardClick(event, 'blog1')">
-                        <div class="blog-tags">
-                            <span class="tag">#threshold-system</span>
-                            <span class="tag">#manual-control</span>
-                            <span class="tag">#1</span>
-                        </div>
-                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=400&fit=crop"
-                            alt="Usage Monitoring" class="blog-image">
-                        <h3 class="blog-title" data-lang="blog1-title">How Usage Monitoring Sustains MLBB-Stats and
-                            API-PDDIKTI</h3>
-                        <p class="blog-excerpt" data-lang="blog1-excerpt">
-                            Two open APIs remain online through a robust threshold system and manual code-based
-                            controls, ensuring sustainable...
-                        </p>
-                        <div class="blog-meta">
-                            <div class="blog-author">
-                                <img src="{{ asset('pages/img/hero.png') }}" alt="Author" class="author-avatar">
-                                <span class="author-name">Ananda Irfansyah</span>
+                @forelse($publications as $pub)
+                    <div class="col-lg-4 col-md-6">
+                        <a href="{{ route('publication.show', $pub->slug) }}" class="blog-card publication-card-home">
+                            <!-- Tags -->
+                            <div class="blog-tags">
+                                @foreach ($pub->tags->take(2) as $tag)
+                                    <span class="tag">#{{ $tag->slug }}</span>
+                                @endforeach
                             </div>
-                            <span class="blog-date">July 9, 2025</span>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-lg-4 col-md-6 col-12">
-                    <a href="#" class="blog-card" onclick="handleCardClick(event, 'blog2')">
-                        <div class="blog-tags">
-                            <span class="tag">#project-management</span>
-                            <span class="tag">#productivity</span>
-                            <span class="tag">#2</span>
-                        </div>
-                        <img src="https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=800&h=400&fit=crop"
-                            alt="Project Priority" class="blog-image">
-                        <h3 class="blog-title" data-lang="blog2-title">Project Priority: What It Is and How to
-                            Master It</h3>
-                        <p class="blog-excerpt" data-lang="blog2-excerpt">
-                            Learn how to prioritize projects effectively based on urgency, complexity, and impact to
-                            stay focused and meet deadlines.
-                        </p>
-                        <div class="blog-meta">
-                            <div class="blog-author">
-                                <img src="{{ asset('pages/img/hero.png') }}" alt="Author" class="author-avatar">
-                                <span class="author-name">Ananda Irfansyah</span>
+
+                            <!-- Image -->
+                            <img src="{{ asset('storage/' . $pub->featured_image) }}" alt="{{ $pub->title }}"
+                                class="blog-image">
+
+                            <!-- Title -->
+                            <h3 class="blog-title">{{ $pub->title }}</h3>
+
+                            <!-- Excerpt -->
+                            <p class="blog-excerpt">
+                                {{ strip_tags($pub->short_abstract) }}
+                            </p>
+
+                            <!-- Meta -->
+                            <div class="blog-meta">
+                                <div class="blog-author">
+                                    <img src="{{ asset('pages/img/hero.png') }}" alt="Author" class="author-avatar">
+                                    <span class="author-name">
+                                        {{ $pub->authors->first()->name ?? 'Anonymous' }}
+                                        @if ($pub->authors->count() > 1)
+                                            et al.
+                                        @endif
+                                    </span>
+                                </div>
+                                <span class="blog-date">{{ $pub->formatted_date }}</span>
                             </div>
-                            <span class="blog-date">July 7, 2025</span>
+                        </a>
+                    </div>
+                @empty
+                    <div class="col-12">
+                        <div class="empty-state">
+                            <p class="text-muted text-center">No publications available yet.</p>
                         </div>
-                    </a>
-                </div>
-                <div class="col-lg-4 col-md-6 col-12">
-                    <a href="#" class="blog-card" onclick="handleCardClick(event, 'blog3')">
-                        <div class="blog-tags">
-                            <span class="tag">#api-update</span>
-                            <span class="tag">#community</span>
-                            <span class="tag">#1</span>
-                        </div>
-                        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=400&fit=crop"
-                            alt="API Status" class="blog-image">
-                        <h3 class="blog-title" data-lang="blog3-title">Remain Online with Low Usage Threshold</h3>
-                        <p class="blog-excerpt" data-lang="blog3-excerpt">
-                            The planned shutdown APIs remain accessible, under a memory usage threshold, ensuring
-                            continued service for the community.
-                        </p>
-                        <div class="blog-meta">
-                            <div class="blog-author">
-                                <img src="{{ asset('pages/img/hero.png') }}" alt="Author" class="author-avatar">
-                                <span class="author-name">Ananda Irfansyah</span>
-                            </div>
-                            <span class="blog-date">June 15, 2025</span>
-                        </div>
-                    </a>
-                </div>
+                    </div>
+                @endforelse
             </div>
 
             <!-- Mobile Carousel View -->
             <div class="blog-mobile d-lg-none">
-                <div id="blogCarousel" class="carousel slide" data-bs-ride="false" data-bs-interval="false">
-                    <div class="carousel-inner">
-                        <div class="carousel-item active">
-                            <a href="#" class="blog-card" onclick="handleCardClick(event, 'blog1')">
-                                <div class="blog-tags">
-                                    <span class="tag">#threshold-system</span>
-                                    <span class="tag">#manual-control</span>
+                @if ($publications->count() > 0)
+                    <div id="blogCarousel" class="carousel slide" data-bs-ride="false" data-bs-interval="false">
+                        <div class="carousel-inner">
+                            @foreach ($publications as $index => $pub)
+                                <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
+                                    <a href="{{ route('publication.show', $pub->slug) }}"
+                                        class="blog-card publication-card-home">
+                                        <!-- Tags -->
+                                        <div class="blog-tags">
+                                            @foreach ($pub->tags->take(2) as $tag)
+                                                <span class="tag">#{{ $tag->slug }}</span>
+                                            @endforeach
+                                        </div>
+
+                                        <!-- Image -->
+                                        <img src="{{ asset('storage/' . $pub->featured_image) }}"
+                                            alt="{{ $pub->title }}" class="blog-image">
+
+                                        <!-- Title -->
+                                        <h3 class="blog-title">{{ $pub->title }}</h3>
+
+                                        <!-- Excerpt -->
+                                        <p class="blog-excerpt">
+                                            {{ strip_tags($pub->short_abstract) }}
+                                        </p>
+
+                                        <!-- Meta -->
+                                        <div class="blog-meta">
+                                            <div class="blog-author">
+                                                <img src="{{ asset('pages/img/hero.png') }}" alt="Author"
+                                                    class="author-avatar">
+                                                <span class="author-name">
+                                                    {{ $pub->authors->first()->name ?? 'Anonymous' }}
+                                                    @if ($pub->authors->count() > 1)
+                                                        et al.
+                                                    @endif
+                                                </span>
+                                            </div>
+                                            <span class="blog-date">{{ $pub->formatted_date }}</span>
+                                        </div>
+                                    </a>
                                 </div>
-                                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=400&fit=crop"
-                                    alt="Usage Monitoring" class="blog-image">
-                                <h3 class="blog-title" data-lang="blog1-title">How Usage Monitoring Sustains
-                                    MLBB-Stats and API-PDDIKTI</h3>
-                                <p class="blog-excerpt" data-lang="blog1-excerpt">
-                                    Two open APIs remain online through a robust threshold system and manual
-                                    code-based controls, ensuring sustainable...
-                                </p>
-                                <div class="blog-meta">
-                                    <div class="blog-author">
-                                        <img src="{{ asset('pages/img/hero.png') }}" alt="Author"
-                                            class="author-avatar">
-                                        <span class="author-name">Ananda Irfansyah</span>
-                                    </div>
-                                    <span class="blog-date">July 9, 2025</span>
-                                </div>
-                            </a>
+                            @endforeach
                         </div>
-                        <div class="carousel-item">
-                            <a href="#" class="blog-card" onclick="handleCardClick(event, 'blog2')">
-                                <div class="blog-tags">
-                                    <span class="tag">#project-management</span>
-                                    <span class="tag">#productivity</span>
-                                </div>
-                                <img src="https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=800&h=400&fit=crop"
-                                    alt="Project Priority" class="blog-image">
-                                <h3 class="blog-title" data-lang="blog2-title">Project Priority: What It Is and How
-                                    to Master It</h3>
-                                <p class="blog-excerpt" data-lang="blog2-excerpt">
-                                    Learn how to prioritize projects effectively based on urgency, complexity, and
-                                    impact to stay focused and meet deadlines.
-                                </p>
-                                <div class="blog-meta">
-                                    <div class="blog-author">
-                                        <img src="{{ asset('pages/img/hero.png') }}" alt="Author"
-                                            class="author-avatar">
-                                        <span class="author-name">Ananda Irfansyah</span>
-                                    </div>
-                                    <span class="blog-date">July 7, 2025</span>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="carousel-item">
-                            <a href="#" class="blog-card" onclick="handleCardClick(event, 'blog3')">
-                                <div class="blog-tags">
-                                    <span class="tag">#api-update</span>
-                                    <span class="tag">#community</span>
-                                </div>
-                                <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=400&fit=crop"
-                                    alt="API Status" class="blog-image">
-                                <h3 class="blog-title" data-lang="blog3-title">Remain Online with Low Usage
-                                    Threshold</h3>
-                                <p class="blog-excerpt" data-lang="blog3-excerpt">
-                                    The planned shutdown APIs remain accessible, under a memory usage threshold,
-                                    ensuring continued service for the community.
-                                </p>
-                                <div class="blog-meta">
-                                    <div class="blog-author">
-                                        <img src="{{ asset('pages/img/hero.png') }}" alt="Author"
-                                            class="author-avatar">
-                                        <span class="author-name">Ananda Irfansyah</span>
-                                    </div>
-                                    <span class="blog-date">June 15, 2025</span>
-                                </div>
-                            </a>
+
+                        <!-- Controls -->
+                        <button class="carousel-control-prev" type="button" data-bs-target="#blogCarousel"
+                            data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#blogCarousel"
+                            data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+
+                        <!-- Indicators -->
+                        <div class="carousel-indicators">
+                            @foreach ($publications as $index => $pub)
+                                <button type="button" data-bs-target="#blogCarousel"
+                                    data-bs-slide-to="{{ $index }}" class="{{ $index === 0 ? 'active' : '' }}"
+                                    aria-current="{{ $index === 0 ? 'true' : 'false' }}"
+                                    aria-label="Slide {{ $index + 1 }}">
+                                </button>
+                            @endforeach
                         </div>
                     </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#blogCarousel"
-                        data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#blogCarousel"
-                        data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
-                    <div class="carousel-indicators">
-                        <button type="button" data-bs-target="#blogCarousel" data-bs-slide-to="0"
-                            class="active"></button>
-                        <button type="button" data-bs-target="#blogCarousel" data-bs-slide-to="1"></button>
-                        <button type="button" data-bs-target="#blogCarousel" data-bs-slide-to="2"></button>
+                @else
+                    <div class="empty-state">
+                        <p class="text-muted text-center">No publications available yet.</p>
                     </div>
-                </div>
+                @endif
             </div>
         </section>
 
         <div class="divider"></div>
-
-        {{-- <section class="tools-section">
-            <div class="row">
-                <div class="col-12">
-                    <h2 class="section-title">
-                        <span data-lang="section-tools">Tools</span>
-                        <span data-lang="section-used">I've Used</span>
-                    </h2>
-                </div>
-            </div>
-            <div class="tools-wrapper">
-                <div class="tools-row">
-                    <span class="tool-badge"><i class="bi bi-telegram" style="color: #0088cc;"></i> Telegram</span>
-                    <span class="tool-badge"><i class="bi bi-filetype-js" style="color: #3178c6;"></i>
-                        TypeScript</span>
-                    <span class="tool-badge"><i class="bi bi-code-slash" style="color: #f7df1e;"></i>
-                        JavaScript</span>
-                    <span class="tool-badge"><i class="bi bi-diagram-3" style="color: #e535ab;"></i> GraphQL</span>
-                    <span class="tool-badge"><i class="bi bi-braces" style="color: #f89939;"></i>
-                        Scikit-learn</span>
-                    <span class="tool-badge"><i class="bi bi-cloud-arrow-up" style="color: #4584b6;"></i>
-                        boto3</span>
-                    <span class="tool-badge"><i class="bi bi-telegram" style="color: #0088cc;"></i> Telegram</span>
-                    <span class="tool-badge"><i class="bi bi-filetype-js" style="color: #3178c6;"></i>
-                        TypeScript</span>
-                    <span class="tool-badge"><i class="bi bi-code-slash" style="color: #f7df1e;"></i>
-                        JavaScript</span>
-                    <span class="tool-badge"><i class="bi bi-diagram-3" style="color: #e535ab;"></i> GraphQL</span>
-                    <span class="tool-badge"><i class="bi bi-braces" style="color: #f89939;"></i>
-                        Scikit-learn</span>
-                    <span class="tool-badge"><i class="bi bi-cloud-arrow-up" style="color: #4584b6;"></i>
-                        boto3</span>
-                </div>
-                <div class="tools-row">
-                    <span class="tool-badge"><i class="bi bi-bootstrap" style="color: #7952b3;"></i>
-                        Bootstrap</span>
-                    <span class="tool-badge"><i class="bi bi-database" style="color: #336791;"></i>
-                        PostgreSQL</span>
-                    <span class="tool-badge"><i class="bi bi-lightning-charge" style="color: #61dafb;"></i>
-                        React</span>
-                    <span class="tool-badge"><i class="bi bi-filetype-py" style="color: #3776ab;"></i> Python</span>
-                    <span class="tool-badge"><i class="bi bi-fire" style="color: #ff6f00;"></i> TensorFlow</span>
-                    <span class="tool-badge"><i class="bi bi-git" style="color: #f05032;"></i> Git</span>
-                    <span class="tool-badge"><i class="bi bi-bootstrap" style="color: #7952b3;"></i>
-                        Bootstrap</span>
-                    <span class="tool-badge"><i class="bi bi-database" style="color: #336791;"></i>
-                        PostgreSQL</span>
-                    <span class="tool-badge"><i class="bi bi-lightning-charge" style="color: #61dafb;"></i>
-                        React</span>
-                    <span class="tool-badge"><i class="bi bi-filetype-py" style="color: #3776ab;"></i> Python</span>
-                    <span class="tool-badge"><i class="bi bi-fire" style="color: #ff6f00;"></i> TensorFlow</span>
-                    <span class="tool-badge"><i class="bi bi-git" style="color: #f05032;"></i> Git</span>
-                </div>
-            </div>
-        </section> --}}
 
         <!-- Tools Section -->
         <section class="tools-section">

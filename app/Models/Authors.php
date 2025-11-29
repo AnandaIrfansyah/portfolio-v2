@@ -23,7 +23,7 @@ class Authors extends Model
 
     public function publications()
     {
-        return $this->belongsToMany(Publication::class, 'publication_authors') // ✅ Ganti ke publication_authors
+        return $this->belongsToMany(Publication::class, 'publication_authors', 'author_id', 'publication_id')
             ->withPivot('author_order')
             ->withTimestamps()
             ->orderBy('year', 'desc')
