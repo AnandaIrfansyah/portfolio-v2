@@ -88,7 +88,7 @@
                             <!-- Meta -->
                             <div class="blog-meta">
                                 <div class="blog-author">
-                                    <img src="{{ asset('pages/img/hero.png') }}" alt="Author" class="author-avatar">
+                                    <i class="bi bi-person"></i>
                                     <span class="author-name">
                                         {{ $pub->authors->first()->name ?? 'Anonymous' }}
                                         @if ($pub->authors->count() > 1)

@@ -14,12 +14,12 @@
                 </a>
             </li>
             <li class="menu-header">Menu</li>
-            <li class="nav-item {{ Request::is('project') ? 'active' : '' }}">
-                <a href="{{ route('project.index') }}" class="nav-link">
+            <li class="nav-item {{ Request::is('menu/projects') ? 'active' : '' }}">
+                <a href="{{ route('projects.index') }}" class="nav-link">
                     <i class="fas fa-laptop-code"></i> <span>Projects</span>
                 </a>
             </li>
-            <li class="nav-item {{ Request::is('publications') ? 'active' : '' }}">
+            <li class="nav-item {{ Request::is('menu/publications') ? 'active' : '' }}">
                 <a href="{{ route('publications.index') }}" class="nav-link">
                     <i class="fas fa-book"></i> <span>Publications</span>
                 </a>

@@ -89,4 +89,17 @@ class TechStackController extends Controller
 
         return response()->json(['message' => 'Berhasil menghapus data.']);
     }
+
+    public function list(Request $request)
+    {
+        $search = $request->search ?? null;
+
+        $techStacks = TechStack::when($search, function ($query, $search) {
+            $query->where('name', 'like', "%{$search}%");
+        })
+            ->orderBy('name')
+            ->get(['id', 'name', 'slug', 'icon_class', 'icon_color']);
+
+        return response()->json(['data' => $techStacks]);
+    }
 }

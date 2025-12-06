@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Admin\AuthorController;
 use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\ProjectCategoryController;
+use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
 use App\Http\Controllers\Admin\PublicationController as AdminPublicationController;
 use App\Http\Controllers\Admin\PublicationTagController;
 use App\Http\Controllers\Admin\TechStackController;
@@ -32,8 +34,9 @@ Route::prefix('home')->group(function () {
 });
 Route::prefix('projects')->group(function () {
     Route::get('/', [ProjectController::class, 'index'])->name('project.index');
+    Route::get('/{id}', [ProjectController::class, 'show'])->name('project.show');
 });
-Route::prefix('publication')->group(function () {
+Route::prefix('publications')->group(function () {
     Route::get('/', [PublicationController::class, 'index'])->name('publication.index');
     Route::get('/{slug}', [PublicationController::class, 'show'])->name('publication.show');
 });
@@ -71,25 +74,47 @@ Route::middleware(['auth', 'role:author'])->group(
             });
         });
 
-        // ✅ PUBLICATIONS (TERPISAH, GAK DI SETTING)
-        Route::prefix('publications')->group(function () {
-            Route::get('/', [AdminPublicationController::class, 'index'])->name('publications.index');
-            Route::post('/store', [AdminPublicationController::class, 'store'])->name('publications.store');
-            Route::get('/{id}/show', [AdminPublicationController::class, 'show'])->name('publications.show');
-            Route::put('/{id}/update', [AdminPublicationController::class, 'update'])->name('publications.update');
-            Route::delete('/{id}/destroy', [AdminPublicationController::class, 'destroy'])->name('publications.destroy');
-        });
+        Route::prefix('menu')->group(function () {
+            // ✅ PUBLICATIONS (TERPISAH, GAK DI SETTING)
+            Route::prefix('publications')->group(function () {
+                Route::get('/', [AdminPublicationController::class, 'index'])->name('publications.index');
+                Route::post('/store', [AdminPublicationController::class, 'store'])->name('publications.store');
+                Route::get('/{id}/show', [AdminPublicationController::class, 'show'])->name('publications.show');
+                Route::put('/{id}/update', [AdminPublicationController::class, 'update'])->name('publications.update');
+                Route::delete('/{id}/destroy', [AdminPublicationController::class, 'destroy'])->name('publications.destroy');
+            });
 
-        // ✅ AUTHORS (Helper untuk dropdown/quick add)
-        Route::prefix('authors')->group(function () {
-            Route::get('/list', [AuthorController::class, 'list'])->name('authors.list');
-            Route::post('/store', [AuthorController::class, 'store'])->name('authors.store');
-        });
+            // ✅ AUTHORS (Helper untuk dropdown/quick add)
+            Route::prefix('authors')->group(function () {
+                Route::get('/list', [AuthorController::class, 'list'])->name('authors.list');
+                Route::post('/store', [AuthorController::class, 'store'])->name('authors.store');
+            });
 
-        // ✅ TAGS (Helper untuk dropdown/quick add)
-        Route::prefix('tags')->group(function () {
-            Route::get('/list', [PublicationTagController::class, 'list'])->name('tags.list');
-            Route::post('/store', [PublicationTagController::class, 'store'])->name('tags.store');
+            // ✅ TAGS (Helper untuk dropdown/quick add)
+            Route::prefix('tags')->group(function () {
+                Route::get('/list', [PublicationTagController::class, 'list'])->name('tags.list');
+                Route::post('/store', [PublicationTagController::class, 'store'])->name('tags.store');
+            });
+
+            // ✅ PROJECTS (BARU)
+            Route::prefix('projects')->group(function () {
+                Route::get('/', [AdminProjectController::class, 'index'])->name('projects.index');
+                Route::post('/store', [AdminProjectController::class, 'store'])->name('projects.store');
+                Route::get('/{id}/show', [AdminProjectController::class, 'show'])->name('projects.show');
+                Route::put('/{id}/update', [AdminProjectController::class, 'update'])->name('projects.update');
+                Route::delete('/{id}/destroy', [AdminProjectController::class, 'destroy'])->name('projects.destroy');
+            });
+
+            // ✅ PROJECT CATEGORIES (Helper)
+            Route::prefix('project-categories')->group(function () {
+                Route::get('/list', [ProjectCategoryController::class, 'list'])->name('project-categories.list');
+                Route::post('/store', [ProjectCategoryController::class, 'store'])->name('project-categories.store');
+            });
+
+            // ✅ TECH STACKS LIST (Helper untuk Projects)
+            Route::prefix('tech-stacks')->group(function () {
+                Route::get('/list', [TechStackController::class, 'list'])->name('tech-stacks.list');
+            });
         });
     }
 );

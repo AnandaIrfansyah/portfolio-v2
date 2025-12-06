@@ -52,7 +52,7 @@
         <a href="{{ route('publication.index') }}" class="nav-item {{ request()->routeIs('publication.index') ? 'active' : '' }}"
             onclick="closeMobileMenu(event)">
             <i class="bi bi-rss"></i>
-            <span data-lang="nav-blog">Publication</span>
+            <span data-lang="nav-blog">Publications</span>
 
             @if (request()->routeIs('publication.index'))
                 <i class="bi bi-arrow-right nav-arrow"></i>

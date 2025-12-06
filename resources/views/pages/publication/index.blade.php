@@ -187,7 +187,8 @@
             transition: all 0.3s ease;
             text-decoration: none;
             color: inherit;
-            display: block;
+            display: flex;
+            flex-direction: column;
             height: 100%;
             overflow: hidden;
             position: relative;
@@ -242,10 +243,14 @@
             width: 100%;
             height: 200px;
             object-fit: cover;
+            flex-shrink: 0;
         }
 
         .publication-content {
             padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
         }
 
         .blog-tags {
@@ -281,6 +286,8 @@
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
+            flex-grow: 1;
+            /* Tambahkan ini agar abstract mengisi ruang yang tersedia */
         }
 
         .publication-meta {
@@ -289,6 +296,8 @@
             justify-content: space-between;
             padding-top: 1rem;
             border-top: 1px solid #1a1a1a;
+            margin-top: auto;
+            /* Ini yang penting - push ke bawah */
         }
 
         .publication-authors {

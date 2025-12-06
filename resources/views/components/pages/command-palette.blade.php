@@ -39,7 +39,7 @@
                     class="command-item {{ request()->routeIs('publication.index') ? 'current' : '' }}">
                     <div class="command-item-left">
                         <i class="bi bi-rss command-item-icon"></i>
-                        <span class="command-item-text">Publication</span>
+                        <span class="command-item-text">Publications</span>
                     </div>
                     <span class="command-item-badge">
                         {{ request()->routeIs('publication.index') ? 'You are here' : 'Pages' }}

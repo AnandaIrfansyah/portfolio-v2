@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Pages;
 
 use App\Http\Controllers\Controller;
 use App\Models\Publication;
+use App\Models\PublicationTag;
 use Illuminate\Http\Request;
 
 class PublicationController extends Controller
@@ -38,7 +39,7 @@ class PublicationController extends Controller
             ->limit(3)
             ->get();
 
-        $popularTags = \App\Models\PublicationTag::popular(10)->get();
+        $popularTags = PublicationTag::popular(10)->get();
 
         return view('pages.publication.index', compact('publications', 'featured', 'popularTags'));
     }

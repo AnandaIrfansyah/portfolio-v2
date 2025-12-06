@@ -951,10 +951,10 @@
         $("#storeBtn").click(function() {
             // Disable button untuk prevent double submit
             $(this).prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Menyimpan...');
-
             let type = $("#type").val();
             let id = $("#id").val();
-            let url = type === "create" ? "{{ route('publications.store') }}" : `/publications/${id}/update`;
+            // ✅ UBAH BAGIAN INI
+            let url = type === "create" ? "{{ route('publications.store') }}" : `${BASE}/${id}/update`;
 
             let formData = new FormData();
             formData.append('title', $("#title").val());
@@ -1016,10 +1016,8 @@
                 },
                 error: function(xhr) {
                     console.error('Error Response:', xhr);
-
                     // Re-enable button
                     $("#storeBtn").prop('disabled', false).html('<i class="fas fa-save"></i> Simpan');
-
                     if (xhr.status === 422) {
                         // Validation errors
                         showErrors(xhr.responseJSON.errors);
@@ -1191,10 +1189,10 @@
                         <div class="col-md-8 p-4 border-right">
                             <!-- Featured Image -->
                             ${d.featured_image ? `
-                                            <div class="mb-4">
-                                                <img src="/storage/${d.featured_image}" class="img-fluid rounded shadow-sm" alt="${d.title}">
-                                            </div>
-                                        ` : ''}
+                                                    <div class="mb-4">
+                                                        <img src="/storage/${d.featured_image}" class="img-fluid rounded shadow-sm" alt="${d.title}">
+                                                    </div>
+                                                ` : ''}
 
                             <!-- Abstract Section -->
                             <div class="mb-4">
@@ -1208,15 +1206,15 @@
 
                             <!-- Full Content Section (if exists) -->
                             ${d.content ? `
-                                            <div class="mb-4">
-                                                <h5 class="border-bottom pb-2 mb-3">
-                                                    <i class="fas fa-align-left text-primary mr-2"></i>Full Content
-                                                </h5>
-                                                <div class="text-justify" style="line-height: 1.8; color: #555;">
-                                                    ${d.content}
-                                                </div>
-                                            </div>
-                                        ` : ''}
+                                                    <div class="mb-4">
+                                                        <h5 class="border-bottom pb-2 mb-3">
+                                                            <i class="fas fa-align-left text-primary mr-2"></i>Full Content
+                                                        </h5>
+                                                        <div class="text-justify" style="line-height: 1.8; color: #555;">
+                                                            ${d.content}
+                                                        </div>
+                                                    </div>
+                                                ` : ''}
                         </div>
 
                         <!-- RIGHT COLUMN -->
@@ -1236,19 +1234,19 @@
                                         <p class="mb-0" style="font-size: 0.9rem;">${d.formatted_date || d.year}</p>
                                     </div>
                                     ${d.venue ? `
-                                                    <div class="mb-3">
-                                                        <small class="text-muted d-block mb-1"><i class="fas fa-building mr-1"></i> Venue:</small>
-                                                        <p class="mb-0" style="font-size: 0.9rem;">${d.venue}</p>
-                                                    </div>
-                                                ` : ''}
+                                                            <div class="mb-3">
+                                                                <small class="text-muted d-block mb-1"><i class="fas fa-building mr-1"></i> Venue:</small>
+                                                                <p class="mb-0" style="font-size: 0.9rem;">${d.venue}</p>
+                                                            </div>
+                                                        ` : ''}
                                     ${d.doi ? `
-                                                    <div class="mb-0">
-                                                        <small class="text-muted d-block mb-1"><i class="fas fa-fingerprint mr-1"></i> DOI:</small>
-                                                        <a href="https://doi.org/${d.doi}" target="_blank" class="text-info" style="font-size: 0.85rem; word-break: break-all;">
-                                                            ${d.doi} <i class="fas fa-external-link-alt ml-1"></i>
-                                                        </a>
-                                                    </div>
-                                                ` : ''}
+                                                            <div class="mb-0">
+                                                                <small class="text-muted d-block mb-1"><i class="fas fa-fingerprint mr-1"></i> DOI:</small>
+                                                                <a href="https://doi.org/${d.doi}" target="_blank" class="text-info" style="font-size: 0.85rem; word-break: break-all;">
+                                                                    ${d.doi} <i class="fas fa-external-link-alt ml-1"></i>
+                                                                </a>
+                                                            </div>
+                                                        ` : ''}
                                 </div>
                             </div>
 
@@ -1264,24 +1262,24 @@
 
                             <!-- Links Card -->
                             ${(d.url || d.pdf_url) ? `
-                                            <div class="card shadow-sm">
-                                                <div class="card-header bg-white">
-                                                    <h6 class="mb-0"><i class="fas fa-link text-primary mr-2"></i>External Links</h6>
-                                                </div>
-                                                <div class="card-body">
-                                                    ${d.url ? `
+                                                    <div class="card shadow-sm">
+                                                        <div class="card-header bg-white">
+                                                            <h6 class="mb-0"><i class="fas fa-link text-primary mr-2"></i>External Links</h6>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            ${d.url ? `
                                             <a href="${d.url}" target="_blank" class="btn btn-sm btn-outline-primary btn-block mb-2">
                                                 <i class="fas fa-globe mr-1"></i> View Publication
                                             </a>
                                         ` : ''}
-                                                    ${d.pdf_url ? `
+                                                            ${d.pdf_url ? `
                                             <a href="${d.pdf_url}" target="_blank" class="btn btn-sm btn-outline-danger btn-block">
                                                 <i class="fas fa-file-pdf mr-1"></i> Download PDF
                                             </a>
                                         ` : ''}
-                                                </div>
-                                            </div>
-                                        ` : ''}
+                                                        </div>
+                                                    </div>
+                                                ` : ''}
                         </div>
                     </div>
                 </div>
@@ -1311,7 +1309,8 @@
             }).then(result => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: `/publications/${id}/destroy`,
+                        // ✅ UBAH BAGIAN INI
+                        url: `${BASE}/${id}/destroy`,
                         method: "DELETE",
                         data: {
                             _token: "{{ csrf_token() }}"

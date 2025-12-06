@@ -591,7 +591,7 @@
                 @if ($publication->content)
                     <div class="pub-content-section">
                         <h2 class="pub-section-title">
-                            <i class="bi bi-article"></i>
+                            <i class="bi bi-file-text"></i>
                             Full Content
                         </h2>
                         <div class="pub-content-text">
