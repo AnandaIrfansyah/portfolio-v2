@@ -34,7 +34,7 @@ class PublicationController extends Controller
 
         $featured = Publication::with(['authors', 'tags'])
             ->published()
-            ->featured()
+            ->orderBy('is_featured', 'desc') // featured dulu
             ->orderBy('year', 'desc')
             ->limit(3)
             ->get();
