@@ -13,6 +13,7 @@ class PublicationController extends Controller
     {
         $query = Publication::with(['authors', 'tags'])
             ->published()
+            ->orderBy('is_featured', 'desc')  // featured dulu
             ->orderBy('year', 'desc')
             ->orderBy('month', 'desc');
 
@@ -34,7 +35,7 @@ class PublicationController extends Controller
 
         $featured = Publication::with(['authors', 'tags'])
             ->published()
-            ->orderBy('is_featured', 'desc') // featured dulu
+            ->featured()        // cukup pakai scope is_featured = true
             ->orderBy('year', 'desc')
             ->limit(3)
             ->get();
