@@ -49,7 +49,6 @@ class Project extends Model
             if (empty($project->slug)) {
                 $project->slug = Str::slug($project->title);
             }
-
             if (empty($project->date) && $project->year) {
                 $monthName = $project->month ? date('M', mktime(0, 0, 0, $project->month, 1)) : '';
                 $project->date = trim($monthName . ' ' . $project->year);
@@ -60,14 +59,12 @@ class Project extends Model
             if ($project->isDirty('title')) {
                 $project->slug = Str::slug($project->title);
             }
-
             if ($project->isDirty(['year', 'month'])) {
                 $monthName = $project->month ? date('M', mktime(0, 0, 0, $project->month, 1)) : '';
                 $project->date = trim($monthName . ' ' . $project->year);
             }
         });
     }
-
 
     public function category()
     {
@@ -89,7 +86,6 @@ class Project extends Model
         return $this->belongsToMany(TechStack::class, 'project_tech_stacks', 'project_id', 'tech_stack_id')
             ->withTimestamps();
     }
-
 
     public function scopeFeatured($query)
     {
@@ -125,77 +121,39 @@ class Project extends Model
         return $query->orderBy('order', 'asc');
     }
 
-
     public function getFormattedDateAttribute()
     {
         if ($this->date) {
             return $this->date;
         }
-
         if ($this->month) {
             $monthName = date('M', mktime(0, 0, 0, $this->month, 1));
             return $monthName . ' ' . $this->year;
         }
-
         return (string) $this->year;
     }
 
     public function getShortDescriptionAttribute()
     {
-        return Str::limit($this->description, 150);
+        return Str::limit(strip_tags($this->description), 150);
     }
 
-    public function getStatusBadgeAttribute()
+    public function getStatusBadgeClassAttribute()
     {
         $badges = [
-            'active' => [
-                'label' => 'Active',
-                'color' => 'success',
-                'icon' => 'circle-fill'
-            ],
-            'completed' => [
-                'label' => 'Completed',
-                'color' => 'primary',
-                'icon' => 'check-circle-fill'
-            ],
-            'archived' => [
-                'label' => 'Archived',
-                'color' => 'secondary',
-                'icon' => 'archive-fill'
-            ],
-            'on_hold' => [
-                'label' => 'On Hold',
-                'color' => 'warning',
-                'icon' => 'pause-circle-fill'
-            ],
-            'in_development' => [
-                'label' => 'In Development',
-                'color' => 'danger',
-                'icon' => 'tools'
-            ]
+            'active' => 'status-active',
+            'completed' => 'status-completed',
+            'archived' => 'status-archived',
+            'on_hold' => 'status-on-hold',
+            'in_development' => 'status-in-development'
         ];
-
-        $badge = $badges[$this->status] ?? $badges['in_development'];
-
-        return [
-            'label' => $badge['label'],
-            'color' => $badge['color'],
-            'icon' => $badge['icon'],
-            'html' => '<span class="badge badge-' . $badge['color'] . '"><i class="bi bi-' . $badge['icon'] . '"></i> ' . $badge['label'] . '</span>'
-        ];
+        return $badges[$this->status] ?? 'status-in-development';
     }
 
-    public function getSupportUrlAttribute()
+    public function getStatusLabelAttribute()
     {
-        $user = User::first();
-        return $user ? $user->support_url : null;
+        return ucfirst(str_replace('_', ' ', $this->status));
     }
-
-    public function getTechStacksStringAttribute()
-    {
-        return $this->techStacks->pluck('name')->implode(', ');
-    }
-
 
     public function incrementViews()
     {

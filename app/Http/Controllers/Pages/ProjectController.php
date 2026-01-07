@@ -13,14 +13,14 @@ class ProjectController extends Controller
     public function index(Request $request)
     {
         $query = Project::with(['category', 'techStacks'])
-            ->whereIn('status', ['active', 'completed']);
+            ->orderBy('is_featured', 'desc')
+            ->orderBy('order', 'asc')
+            ->orderBy('year', 'desc')
+            ->orderBy('month', 'desc');
 
         // Search
         if ($request->has('search') && $request->search) {
-            $query->where(function ($q) use ($request) {
-                $q->where('title', 'like', '%' . $request->search . '%')
-                    ->orWhere('description', 'like', '%' . $request->search . '%');
-            });
+            $query->search($request->search);
         }
 
         // Category Filter
@@ -33,19 +33,13 @@ class ProjectController extends Controller
             $query->where('status', $request->status);
         }
 
-        // Order by featured first, then by order, then by date
-        $projects = $query->orderBy('is_featured', 'desc')
-            ->orderBy('order', 'asc')
-            ->orderBy('year', 'desc')
-            ->orderBy('month', 'desc')
-            ->paginate(6);
-
+        $projects = $query->paginate(6);
         $categories = ProjectCategories::all();
 
         return view('pages.project.index', compact('projects', 'categories'));
     }
 
-    public function show($id)
+    public function show($slug)
     {
         $project = Project::with([
             'category',
@@ -54,13 +48,10 @@ class ProjectController extends Controller
             'images' => function ($query) {
                 $query->orderBy('order', 'asc');
             }
-        ])->findOrFail($id);
+        ])->where('slug', $slug)->firstOrFail();
 
         // Increment views
-        $project->increment('views');
-
-        // Get user info for support link
-        $user = User::first();
+        $project->incrementViews();
 
         // Related projects
         $related = Project::with(['category', 'techStacks'])
@@ -77,6 +68,6 @@ class ProjectController extends Controller
             ->limit(3)
             ->get();
 
-        return view('pages.project.show', compact('project', 'related', 'user'));
+        return view('pages.project.show', compact('project', 'related'));
     }
 }

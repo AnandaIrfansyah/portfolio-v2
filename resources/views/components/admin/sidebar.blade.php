@@ -24,6 +24,32 @@
                     <i class="fas fa-book"></i> <span>Publications</span>
                 </a>
             </li>
+            <li class="nav-item {{ Request::is('menu/about') ? 'active' : '' }}">
+                <a href="{{ route('abouts.index') }}" class="nav-link">
+                    <i class="fas fa-user"></i> <span>About</span>
+                </a>
+            </li>
+
+            {{-- <li
+                class="nav-item dropdown {{ Request::is('menu/about*') || Request::is('menu/educations*') || Request::is('menu/certifications*') ? 'active' : '' }}">
+                <a href="#" class="nav-link has-dropdown">
+                    <i class="fas fa-database"></i> <span>About Management</span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li class="{{ Request::is('menu/about*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('about.index') }}">Intro & CV</a>
+                    </li>
+                    <li class="{{ Request::is('menu/educations*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('about.index') }}">Experiences</a>
+                    </li>
+                    <li class="{{ Request::is('menu/certifications*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('about.index') }}">Educations</a>
+                    </li>
+                    <li class="{{ Request::is('menu/certifications*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('about.index') }}">Certifications</a>
+                    </li>
+                </ul>
+            </li> --}}
 
             <li class="menu-header">Setting</li>
             <li class="nav-item {{ Request::is('setting/tech-stack') ? 'active' : '' }}">

@@ -1,6 +1,10 @@
 <?php
 
+use App\Http\Controllers\Admin\AboutController as AdminAboutController;
 use App\Http\Controllers\Admin\AuthorController;
+use App\Http\Controllers\Admin\CertificationController;
+use App\Http\Controllers\Admin\EducationController;
+use App\Http\Controllers\Admin\ExperienceController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\ProjectCategoryController;
 use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
@@ -34,7 +38,7 @@ Route::prefix('home')->group(function () {
 });
 Route::prefix('projects')->group(function () {
     Route::get('/', [ProjectController::class, 'index'])->name('project.index');
-    Route::get('/{id}', [ProjectController::class, 'show'])->name('project.show');
+    Route::get('/{slug}', [ProjectController::class, 'show'])->name('project.show');
 });
 Route::prefix('publications')->group(function () {
     Route::get('/', [PublicationController::class, 'index'])->name('publication.index');
@@ -114,6 +118,60 @@ Route::middleware(['auth', 'role:author'])->group(
             // ✅ TECH STACKS LIST (Helper untuk Projects)
             Route::prefix('tech-stacks')->group(function () {
                 Route::get('/list', [TechStackController::class, 'list'])->name('tech-stacks.list');
+            });
+
+            // About Management Routes
+            Route::prefix('about')->name('abouts.')->group(function () {
+                // Main page
+                Route::get('/', [AdminAboutController::class, 'index'])->name('index');
+
+                // Intro & CV
+                Route::get('/intro/show', [AdminAboutController::class, 'showIntro'])->name('intro.show');
+                Route::post('/intro/update', [AdminAboutController::class, 'updateIntro'])->name('intro.update');
+
+                // Experiences
+                Route::prefix('experiences')->name('experiences.')->group(function () {
+                    Route::get('/list', [ExperienceController::class, 'list'])->name('list');
+                    Route::post('/store', [ExperienceController::class, 'store'])->name('store');
+                    Route::get('/{id}/show', [ExperienceController::class, 'show'])->name('show');
+                    Route::put('/{id}/update', [ExperienceController::class, 'update'])->name('update');
+                    Route::delete('/{id}/destroy', [ExperienceController::class, 'destroy'])->name('destroy');
+
+                    // Positions
+                    Route::post('/{experience_id}/positions/store', [ExperienceController::class, 'storePosition'])->name('positions.store');
+                    Route::put('/positions/{id}/update', [ExperienceController::class, 'updatePosition'])->name('positions.update');
+                    Route::delete('/positions/{id}/destroy', [ExperienceController::class, 'destroyPosition'])->name('positions.destroy');
+
+                    // Achievements
+                    Route::post('/positions/{position_id}/achievements/store', [ExperienceController::class, 'storeAchievement'])->name('achievements.store');
+                    Route::delete('/achievements/{id}/destroy', [ExperienceController::class, 'destroyAchievement'])->name('achievements.destroy');
+                });
+
+                // Educations
+                Route::prefix('educations')->name('educations.')->group(function () {
+                    Route::get('/list', [EducationController::class, 'list'])->name('list');
+                    Route::post('/store', [EducationController::class, 'store'])->name('store');
+                    Route::get('/{id}/show', [EducationController::class, 'show'])->name('show');
+                    Route::put('/{id}/update', [EducationController::class, 'update'])->name('update');
+                    Route::delete('/{id}/destroy', [EducationController::class, 'destroy'])->name('destroy');
+
+                    // Achievements
+                    Route::post('/{education_id}/achievements/store', [EducationController::class, 'storeAchievement'])->name('achievements.store');
+                    Route::delete('/achievements/{id}/destroy', [EducationController::class, 'destroyAchievement'])->name('achievements.destroy');
+                });
+
+                // Certifications
+                Route::prefix('certifications')->name('certifications.')->group(function () {
+                    Route::get('/list', [CertificationController::class, 'list'])->name('list');
+                    Route::post('/store', [CertificationController::class, 'store'])->name('store');
+                    Route::get('/{id}/show', [CertificationController::class, 'show'])->name('show');
+                    Route::put('/{id}/update', [CertificationController::class, 'update'])->name('update');
+                    Route::delete('/{id}/destroy', [CertificationController::class, 'destroy'])->name('destroy');
+
+                    // Achievements
+                    Route::post('/{certification_id}/achievements/store', [CertificationController::class, 'storeAchievement'])->name('achievements.store');
+                    Route::delete('/achievements/{id}/destroy', [CertificationController::class, 'destroyAchievement'])->name('achievements.destroy');
+                });
             });
         });
     }

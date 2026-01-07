@@ -255,10 +255,20 @@
 
         .blog-tags {
             display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            margin-bottom: 1rem;
+            gap: 6px;
+            flex-wrap: nowrap;
+            /* PENTING: cegah turun ke bawah */
+            overflow: hidden;
         }
+
+        .blog-tags .tag {
+            max-width: 120px;
+            /* atur sesuai kebutuhan */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
 
         .tag {
             background-color: #1a1a1a;
@@ -511,6 +521,12 @@
                                     @foreach ($pub->tags->take(2) as $tag)
                                         <span class="tag">#{{ $tag->slug }}</span>
                                     @endforeach
+
+                                    @if ($pub->tags->count() > 2)
+                                        <span class="tag more-tags">
+                                            +{{ $pub->tags->count() - 2 }}
+                                        </span>
+                                    @endif
                                 </div>
 
                                 <!-- Title -->

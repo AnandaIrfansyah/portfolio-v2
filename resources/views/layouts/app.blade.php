@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
     <title>@yield('title') &mdash; Portfolio</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="shortcut icon" type="image/png" href="{{ asset('pages/img/favicon.png') }}" />
 
     <!-- General CSS Files -->
@@ -67,11 +68,35 @@
     <script src="{{ asset('admin/library/select2/dist/js/select2.full.min.js') }}"></script>
     <script src="{{ asset('admin/library/summernote/dist/summernote-bs4.js') }}"></script>
 
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2({
+                width: '100%'
+            });
+
+            // Re-initialize saat modal ditampilkan
+            $('.modal').on('shown.bs.modal', function() {
+                $('.select2', this).select2({
+                    width: '100%',
+                    dropdownParent: $(this)
+                });
+            });
+        });
+    </script>
+
     @stack('scripts')
 
     <!-- Template JS File -->
     <script src="{{ asset('admin/js/scripts.js') }}"></script>
     <script src="{{ asset('admin/js/custom.js') }}"></script>
+    <script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        });
+    </script>
+    
 </body>
 
 </html>

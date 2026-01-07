@@ -619,7 +619,7 @@
                                 {{-- Description --}}
                                 <div class="form-group">
                                     <label>Short Description <span class="text-danger">*</span></label>
-                                    <textarea id="description" class="form-control" rows="3"
+                                    <textarea id="description" class="form-control summernote-simple"
                                         placeholder="Deskripsi singkat untuk card preview..."></textarea>
                                     <span class="text-danger error_description"></span>
                                     <small class="text-muted">Deskripsi singkat untuk card (150-200 karakter)</small>
@@ -791,7 +791,7 @@
                         </div>
                         <div class="form-group">
                             <label>Description <span class="text-danger">*</span></label>
-                            <textarea id="feature_description" class="form-control" rows="3" placeholder="Deskripsi feature..."></textarea>
+                            <textarea id="feature_description" class="form-control summernote-simple" placeholder="Deskripsi feature..."></textarea>
                             <span class="text-danger error_feature_description"></span>
                         </div>
                         <div class="form-group">
@@ -908,6 +908,7 @@
             $("#galleryPreview").html("");
 
             // Reset Summernote
+            $("#description").summernote('code', '');
             $("#content").summernote('code', '');
 
             clearErrors();
@@ -1198,7 +1199,7 @@
                     $("#is_featured").prop("checked", d.is_featured);
 
                     // Content
-                    $("#description").val(d.description);
+                    $("#description").summernote('code', d.description || '');
                     $("#content").summernote('code', d.content || '');
 
                     // Tech Stacks
@@ -1354,10 +1355,10 @@
                                 <div class="col-md-8 p-4 border-right">
                                     <!-- Featured Image -->
                                     ${d.featured_image ? `
-                                                <div class="mb-4">
-                                                    <img src="/storage/${d.featured_image}" class="img-fluid rounded shadow-sm" alt="${d.title}">
-                                                </div>
-                                            ` : ''}
+                                                        <div class="mb-4">
+                                                            <img src="/storage/${d.featured_image}" class="img-fluid rounded shadow-sm" alt="${d.title}">
+                                                        </div>
+                                                    ` : ''}
 
                                     <!-- Description -->
                                     <div class="mb-4">
@@ -1369,33 +1370,33 @@
 
                                     <!-- Full Content -->
                                     ${d.content ? `
-                                                <div class="mb-4">
-                                                    <h5 class="border-bottom pb-2 mb-3">
-                                                        <i class="fas fa-file-alt text-primary mr-2"></i>Full Content
-                                                    </h5>
-                                                    <div class="text-justify" style="line-height: 1.8;">${d.content}</div>
-                                                </div>
-                                            ` : ''}
+                                                        <div class="mb-4">
+                                                            <h5 class="border-bottom pb-2 mb-3">
+                                                                <i class="fas fa-file-alt text-primary mr-2"></i>Full Content
+                                                            </h5>
+                                                            <div class="text-justify" style="line-height: 1.8;">${d.content}</div>
+                                                        </div>
+                                                    ` : ''}
 
                                     <!-- Features -->
                                     ${d.features && d.features.length > 0 ? `
-                                                <div class="mb-4">
-                                                    <h5 class="border-bottom pb-2 mb-3">
-                                                        <i class="fas fa-star text-primary mr-2"></i>Features
-                                                    </h5>
-                                                    ${featuresList}
-                                                </div>
-                                            ` : ''}
+                                                        <div class="mb-4">
+                                                            <h5 class="border-bottom pb-2 mb-3">
+                                                                <i class="fas fa-star text-primary mr-2"></i>Features
+                                                            </h5>
+                                                            ${featuresList}
+                                                        </div>
+                                                    ` : ''}
 
                                     <!-- Gallery -->
                                     ${d.images && d.images.length > 0 ? `
-                                                <div class="mb-4">
-                                                    <h5 class="border-bottom pb-2 mb-3">
-                                                        <i class="fas fa-images text-primary mr-2"></i>Gallery
-                                                    </h5>
-                                                    ${galleryHtml}
-                                                </div>
-                                            ` : ''}
+                                                        <div class="mb-4">
+                                                            <h5 class="border-bottom pb-2 mb-3">
+                                                                <i class="fas fa-images text-primary mr-2"></i>Gallery
+                                                            </h5>
+                                                            ${galleryHtml}
+                                                        </div>
+                                                    ` : ''}
                                 </div>
 
                                 <!-- RIGHT COLUMN -->
@@ -1411,17 +1412,17 @@
                                                 <p class="mb-0">${d.formatted_date}</p>
                                             </div>
                                             ${d.category ? `
-                                                        <div class="mb-3">
-                                                            <small class="text-muted d-block mb-1"><i class="fas fa-folder mr-1"></i> Category:</small>
-                                                            <p class="mb-0">${d.category.name}</p>
-                                                        </div>
-                                                    ` : ''}
+                                                                <div class="mb-3">
+                                                                    <small class="text-muted d-block mb-1"><i class="fas fa-folder mr-1"></i> Category:</small>
+                                                                    <p class="mb-0">${d.category.name}</p>
+                                                                </div>
+                                                            ` : ''}
                                             ${d.role ? `
-                                                        <div class="mb-0">
-                                                            <small class="text-muted d-block mb-1"><i class="fas fa-user-tag mr-1"></i> Role:</small>
-                                                            <p class="mb-0">${d.role}</p>
-                                                        </div>
-                                                    ` : ''}
+                                                                <div class="mb-0">
+                                                                    <small class="text-muted d-block mb-1"><i class="fas fa-user-tag mr-1"></i> Role:</small>
+                                                                    <p class="mb-0">${d.role}</p>
+                                                                </div>
+                                                            ` : ''}
                                         </div>
                                     </div>
 
@@ -1437,24 +1438,24 @@
 
                                     <!-- Links -->
                                     ${(d.github_url || d.demo_url) ? `
-                                                <div class="card shadow-sm">
-                                                    <div class="card-header bg-white">
-                                                        <h6 class="mb-0"><i class="fas fa-link text-primary mr-2"></i>Links</h6>
-                                                    </div>
-                                                    <div class="card-body">
-                                                        ${d.github_url ? `
+                                                        <div class="card shadow-sm">
+                                                            <div class="card-header bg-white">
+                                                                <h6 class="mb-0"><i class="fas fa-link text-primary mr-2"></i>Links</h6>
+                                                            </div>
+                                                            <div class="card-body">
+                                                                ${d.github_url ? `
                                                     <a href="${d.github_url}" target="_blank" class="btn btn-sm btn-dark btn-block mb-2">
                                                         <i class="fab fa-github mr-1"></i> GitHub
                                                     </a>
                                                 ` : ''}
-                                                        ${d.demo_url ? `
+                                                                ${d.demo_url ? `
                                                     <a href="${d.demo_url}" target="_blank" class="btn btn-sm btn-primary btn-block">
                                                         <i class="fas fa-external-link-alt mr-1"></i> Live Demo
                                                     </a>
                                                 ` : ''}
-                                                    </div>
-                                                </div>
-                                            ` : ''}
+                                                            </div>
+                                                        </div>
+                                                    ` : ''}
                                 </div>
                             </div>
                         </div>

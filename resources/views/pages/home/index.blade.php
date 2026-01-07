@@ -3,6 +3,21 @@
 @section('title', 'Home')
 
 @push('styles')
+    <style>
+        .blog-tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: nowrap;
+            overflow: hidden;
+        }
+
+        .blog-tags .tag {
+            max-width: 120px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
 @endpush
 
 @section('content')
@@ -69,9 +84,18 @@
                             <!-- Tags -->
                             <div class="blog-tags">
                                 @foreach ($pub->tags->take(2) as $tag)
-                                    <span class="tag">#{{ $tag->slug }}</span>
+                                    <span class="tag" title="#{{ $tag->slug }}">
+                                        #{{ $tag->slug }}
+                                    </span>
                                 @endforeach
+
+                                @if ($pub->tags->count() > 2)
+                                    <span class="tag more-tags">
+                                        +{{ $pub->tags->count() - 2 }}
+                                    </span>
+                                @endif
                             </div>
+
 
                             <!-- Image -->
                             <img src="{{ asset('storage/' . $pub->featured_image) }}" alt="{{ $pub->title }}"
@@ -121,8 +145,16 @@
                                         <!-- Tags -->
                                         <div class="blog-tags">
                                             @foreach ($pub->tags->take(2) as $tag)
-                                                <span class="tag">#{{ $tag->slug }}</span>
+                                                <span class="tag" title="#{{ $tag->slug }}">
+                                                    #{{ $tag->slug }}
+                                                </span>
                                             @endforeach
+
+                                            @if ($pub->tags->count() > 2)
+                                                <span class="tag more-tags">
+                                                    +{{ $pub->tags->count() - 2 }}
+                                                </span>
+                                            @endif
                                         </div>
 
                                         <!-- Image -->

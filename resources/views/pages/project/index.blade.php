@@ -206,7 +206,7 @@
             box-shadow: 0 8px 24px rgba(37, 99, 235, 0.15);
         }
 
-        .project-badge {
+        .project-featured-badge {
             position: absolute;
             top: 1rem;
             right: 1rem;
@@ -225,7 +225,7 @@
             letter-spacing: 0.05em;
         }
 
-        .project-badge i {
+        .project-featured-badge i {
             font-size: 0.875rem;
             animation: pulse 2s infinite;
         }
@@ -244,11 +244,75 @@
             }
         }
 
+        /* Container untuk image + code effect */
+        .project-image-container {
+            width: 100%;
+            height: 240px;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(180deg, #0a0a0a 0%, #050505 100%);
+            border-bottom: 1px solid #1a1a1a;
+            flex-shrink: 0;
+        }
+
+        /* Code overlay effect - LEBIH KELIATAN */
+        .project-image-container::before {
+            content: '// JavaScript\Aconst fetchData = async () => {\A  try {\A    const response = await fetch(url);\A    return response.json();\A  } catch (error) {\A    console.error(error);\A  }\A};\A\A<!-- HTML -->\A<div className="app">\A  <Component />\A</div>\A\A/* CSS */\A.container {\A  display: grid;\A  gap: 2rem;\A}\A\A$data = getData();\Aecho $result;\A\ASELECT * FROM users\AWHERE id = 1;';
+            position: absolute;
+            inset: 0;
+            font-family: 'Courier New', 'Consolas', 'Monaco', monospace;
+            font-size: 0.8rem;
+            line-height: 1.6;
+            color: rgba(37, 99, 235, 0.25);
+            white-space: pre;
+            padding: 1.5rem;
+            pointer-events: none;
+            z-index: 1;
+            text-shadow:
+                0 0 15px rgba(37, 99, 235, 0.3),
+                0 0 30px rgba(37, 99, 235, 0.2);
+            overflow: hidden;
+            animation: codeFloat 8s ease-in-out infinite;
+        }
+
+        @keyframes codeFloat {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            25% {
+                transform: translateY(-10px) rotate(-2deg);
+            }
+
+            75% {
+                transform: translateY(10px) rotate(2deg);
+            }
+        }
+
+        /* Gradient glow effect */
+        .project-image-container::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 30% 30%, rgba(16, 185, 129, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 70% 70%, rgba(239, 68, 68, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Image styling */
         .project-image {
             width: 100%;
-            height: 200px;
-            object-fit: cover;
-            flex-shrink: 0;
+            height: 100%;
+            object-fit: contain;
+            object-position: center;
+            padding: 1.5rem;
+            position: relative;
+            z-index: 2;
+            /* Image di atas code effect */
         }
 
         .project-content {
@@ -263,6 +327,7 @@
             gap: 0.5rem;
             align-items: center;
             margin-bottom: 1rem;
+            flex-wrap: wrap;
         }
 
         .project-category {
@@ -279,6 +344,9 @@
             border-radius: 0.375rem;
             font-size: 0.75rem;
             font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
         }
 
         .status-active {
@@ -291,6 +359,24 @@
             background-color: rgba(59, 130, 246, 0.1);
             color: #3b82f6;
             border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .status-archived {
+            background-color: rgba(107, 114, 128, 0.1);
+            color: #9ca3af;
+            border: 1px solid rgba(107, 114, 128, 0.2);
+        }
+
+        .status-on-hold {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        .status-in-development {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
         }
 
         .project-title {
@@ -315,20 +401,33 @@
 
         .project-tech {
             display: flex;
-            gap: 0.75rem;
+            gap: 0.625rem;
             align-items: center;
             padding-top: 1rem;
             border-top: 1px solid #1a1a1a;
             margin-top: auto;
+            flex-wrap: wrap;
         }
 
         .tech-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.375rem;
             font-size: 1.25rem;
-            transition: transform 0.2s;
+            background-color: #1a1a1a;
+            transition: all 0.2s;
         }
 
         .tech-icon:hover {
-            transform: scale(1.15);
+            transform: scale(1.1);
+            background-color: #262626;
+        }
+
+        .tech-icon i {
+            font-size: 1.25rem;
         }
 
         /* Empty State */
@@ -454,7 +553,7 @@
         <div class="search-filter-container">
             <!-- Search -->
             <section class="project-search-section">
-                <form action="{{ route('project.index') }}" method="GET" id="projectSearchForm">
+                <form action="{{ route('project.index') }}" method="GET">
                     <input type="hidden" name="category" value="{{ request('category') }}">
                     <input type="hidden" name="status" value="{{ request('status') }}">
                     <div class="project-search-wrapper">
@@ -474,7 +573,7 @@
                 <div class="filter-dropdown">
                     <button class="filter-dropdown-btn" id="categoryDropdownBtn">
                         <i class="bi bi-folder"></i>
-                        <span>{{ request('category') ? $categories->find(request('category'))->name : 'All Categories' }}</span>
+                        <span>{{ request('category') ? $categories->firstWhere('id', request('category'))->name ?? 'All Categories' : 'All Categories' }}</span>
                         <i class="bi bi-chevron-down"></i>
                     </button>
                     <div class="filter-dropdown-menu" id="categoryDropdownMenu">
@@ -519,16 +618,18 @@
             <div class="row g-4">
                 @forelse($projects as $project)
                     <div class="col-lg-4 col-md-6">
-                        <a href="{{ route('project.show', $project->id) }}" class="project-card">
+                        <a href="{{ route('project.show', $project->slug) }}" class="project-card">
                             @if ($project->is_featured)
-                                <span class="project-badge">
+                                <span class="project-featured-badge">
                                     <i class="bi bi-star-fill"></i>
                                     Featured
                                 </span>
                             @endif
 
-                            <img src="{{ $project->featured_image ? asset('storage/' . $project->featured_image) : 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=400&fit=crop' }}"
-                                alt="{{ $project->title }}" class="project-image" loading="lazy">
+                            <div class="project-image-container">
+                                <img src="{{ $project->featured_image ? asset('storage/' . $project->featured_image) : 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=400&fit=crop' }}"
+                                    alt="{{ $project->title }}" class="project-image" loading="lazy">
+                            </div>
 
                             <div class="project-content">
                                 <div class="project-meta-top">
@@ -537,35 +638,37 @@
                                             {{ $project->category->name }}
                                         </span>
                                     @endif
-                                    @php
-                                        $statusClasses = [
-                                            'active' => 'status-active',
-                                            'completed' => 'status-completed',
-                                        ];
-                                    @endphp
-                                    <span class="project-status {{ $statusClasses[$project->status] ?? 'status-active' }}">
-                                        {{ ucfirst(str_replace('_', ' ', $project->status)) }}
+                                    <span class="project-status {{ $project->status_badge_class }}">
+                                        <i class="bi bi-circle-fill"></i>
+                                        {{ $project->status_label }}
                                     </span>
                                 </div>
 
                                 <h3 class="project-title">{{ $project->title }}</h3>
 
                                 <p class="project-desc">
-                                    {{ Str::limit($project->description, 150) }}
+                                    {{ $project->short_description }}
                                 </p>
 
                                 @if ($project->techStacks->count() > 0)
                                     <div class="project-tech">
-                                        @foreach ($project->techStacks->take(6) as $tech)
-                                            <span class="tech-icon" style="color: {{ $tech->color ?? '#6b7280' }};"
-                                                title="{{ $tech->name }}">
+                                        @foreach ($project->techStacks->take(5) as $tech)
+                                            <span class="tech-icon" title="{{ $tech->name }}">
                                                 @if ($tech->icon_class)
-                                                    <i class="{{ $tech->icon_class }}"></i>
+                                                    <i class="{{ $tech->icon_class }}"
+                                                        style="color: {{ $tech->icon_color ?? '#9ca3af' }};"></i>
                                                 @else
-                                                    <i class="bi bi-code-slash"></i>
+                                                    <i class="bi bi-code-slash"
+                                                        style="color: {{ $tech->icon_color ?? '#9ca3af' }};"></i>
                                                 @endif
                                             </span>
                                         @endforeach
+                                        @if ($project->techStacks->count() > 5)
+                                            <span class="tech-icon" title="{{ $project->techStacks->count() - 5 }} more">
+                                                <span
+                                                    style="font-size: 0.75rem; font-weight: 600; color: #9ca3af;">+{{ $project->techStacks->count() - 5 }}</span>
+                                            </span>
+                                        @endif
                                     </div>
                                 @endif
                             </div>
@@ -594,7 +697,7 @@
                             <i class="bi bi-chevron-left"></i>
                         </span>
                     @else
-                        <a href="{{ $projects->previousPageUrl() }}" class="page-item">
+                        <a href="{{ $projects->appends(request()->query())->previousPageUrl() }}" class="page-item">
                             <i class="bi bi-chevron-left"></i>
                         </a>
                     @endif
@@ -603,12 +706,13 @@
                         @if ($page == $projects->currentPage())
                             <span class="page-item active">{{ $page }}</span>
                         @else
-                            <a href="{{ $projects->url($page) }}" class="page-item">{{ $page }}</a>
+                            <a href="{{ $projects->appends(request()->query())->url($page) }}"
+                                class="page-item">{{ $page }}</a>
                         @endif
                     @endforeach
 
                     @if ($projects->hasMorePages())
-                        <a href="{{ $projects->nextPageUrl() }}" class="page-item">
+                        <a href="{{ $projects->appends(request()->query())->nextPageUrl() }}" class="page-item">
                             <i class="bi bi-chevron-right"></i>
                         </a>
                     @else
