@@ -21,9 +21,12 @@
         <section class="guestbook-section">
             <div class="section-header">
                 <div class="section-header-left">
-                    <i class="bi bi-chat-left-quote section-icon"></i>
+                    <span class="section-icon">
+                        <i class="bi bi-chat-left-quote"></i>
+                    </span>
                     <h2 class="section-title">Guestbook Messages</h2>
                 </div>
+
                 <span class="message-count">13 messages</span>
             </div>
 

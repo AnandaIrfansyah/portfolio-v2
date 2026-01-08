@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AboutController as AdminAboutController;
 use App\Http\Controllers\Admin\AuthorController;
 use App\Http\Controllers\Admin\CertificationController;
+use App\Http\Controllers\Admin\ContactController as AdminContactController;
 use App\Http\Controllers\Admin\EducationController;
 use App\Http\Controllers\Admin\ExperienceController;
 use App\Http\Controllers\Admin\ProfileController;
@@ -49,6 +50,7 @@ Route::prefix('about')->group(function () {
 });
 Route::prefix('contact')->group(function () {
     Route::get('/', [ContactController::class, 'index'])->name('contact.index');
+    Route::post('/', [ContactController::class, 'store'])->name('contact.store');
 });
 Route::prefix('guestbook')->group(function () {
     Route::get('/', [GuestBookController::class, 'index'])->name('guestbook.index');
@@ -172,6 +174,15 @@ Route::middleware(['auth', 'role:author'])->group(
                     Route::post('/{certification_id}/achievements/store', [CertificationController::class, 'storeAchievement'])->name('achievements.store');
                     Route::delete('/achievements/{id}/destroy', [CertificationController::class, 'destroyAchievement'])->name('achievements.destroy');
                 });
+            });
+
+            // Contact Management
+            Route::prefix('contacts')->name('contacts.')->group(function () {
+                Route::get('/', [AdminContactController::class, 'index'])->name('index');
+                Route::get('/{id}/show', [AdminContactController::class, 'show'])->name('show');
+                Route::post('/{id}/update-status', [AdminContactController::class, 'updateStatus'])->name('update-status');
+                Route::delete('/{id}/destroy', [AdminContactController::class, 'destroy'])->name('destroy');
+                Route::post('/bulk-delete', [AdminContactController::class, 'bulkDelete'])->name('bulk-delete');
             });
         });
     }

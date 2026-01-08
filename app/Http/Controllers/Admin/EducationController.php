@@ -33,19 +33,21 @@ class EducationController extends Controller
         try {
             Log::info('Education Store Request:', $request->all());
 
+            // ✅ DECODE JSON achievements dulu sebelum validasi
+            $achievements = json_decode($request->achievements, true);
+
             $validation = Validator::make($request->all(), [
                 'institution_name' => 'required|string|max:255',
-                'institution_logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-                'degree' => 'required|string|max:255',
+                'degree' => 'required|string|max:100',
                 'field_of_study' => 'required|string|max:255',
                 'location' => 'required|string|max:255',
                 'start_date' => 'required|date',
-                'end_date' => 'nullable|date|after:start_date',
+                'end_date' => 'nullable|date|after_or_equal:start_date',
                 'gpa' => 'nullable|string|max:10',
                 'order' => 'nullable|integer|min:0',
                 'is_visible' => 'nullable|boolean',
-                'achievements' => 'nullable|array',
-                'achievements.*' => 'required|string',
+                'institution_logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+                // ✅ Jangan validasi achievements sebagai array
             ]);
 
             if ($validation->fails()) {
@@ -78,14 +80,15 @@ class EducationController extends Controller
 
             Log::info('Education created:', ['id' => $education->id]);
 
-            // Create achievements
-            if ($request->has('achievements') && is_array($request->achievements)) {
-                foreach ($request->achievements as $index => $achievement) {
-                    EducationAchievement::create([
-                        'education_id' => $education->id,
-                        'achievement_text' => $achievement,
-                        'order' => $index + 1,
-                    ]);
+            // ✅ Create achievements dari decoded array
+            if ($achievements && is_array($achievements)) {
+                foreach ($achievements as $index => $achievementText) {
+                    if (!empty($achievementText)) {
+                        $education->achievements()->create([
+                            'achievement_text' => $achievementText,
+                            'order' => $index + 1,
+                        ]);
+                    }
                 }
             }
 
@@ -122,19 +125,20 @@ class EducationController extends Controller
         try {
             Log::info('Education Update Request:', $request->all());
 
+            // ✅ DECODE JSON achievements dulu
+            $achievements = json_decode($request->achievements, true);
+
             $validation = Validator::make($request->all(), [
                 'institution_name' => 'required|string|max:255',
-                'institution_logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-                'degree' => 'required|string|max:255',
+                'degree' => 'required|string|max:100',
                 'field_of_study' => 'required|string|max:255',
                 'location' => 'required|string|max:255',
                 'start_date' => 'required|date',
-                'end_date' => 'nullable|date|after:start_date',
+                'end_date' => 'nullable|date|after_or_equal:start_date',
                 'gpa' => 'nullable|string|max:10',
                 'order' => 'nullable|integer|min:0',
                 'is_visible' => 'nullable|boolean',
-                'achievements' => 'nullable|array',
-                'achievements.*' => 'required|string',
+                'institution_logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             ]);
 
             if ($validation->fails()) {
@@ -146,7 +150,6 @@ class EducationController extends Controller
             }
 
             $education = Education::find($id);
-
             if (!$education) {
                 return response()->json([
                     'success' => false,
@@ -177,17 +180,18 @@ class EducationController extends Controller
                 'is_visible' => $request->boolean('is_visible', true),
             ]);
 
-            // Delete existing achievements
+            // Delete old achievements
             $education->achievements()->delete();
 
-            // Recreate achievements
-            if ($request->has('achievements') && is_array($request->achievements)) {
-                foreach ($request->achievements as $index => $achievement) {
-                    EducationAchievement::create([
-                        'education_id' => $education->id,
-                        'achievement_text' => $achievement,
-                        'order' => $index + 1,
-                    ]);
+            // Create new achievements
+            if ($achievements && is_array($achievements)) {
+                foreach ($achievements as $index => $achievementText) {
+                    if (!empty($achievementText)) {
+                        $education->achievements()->create([
+                            'achievement_text' => $achievementText,
+                            'order' => $index + 1,
+                        ]);
+                    }
                 }
             }
 

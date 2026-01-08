@@ -32,17 +32,18 @@ class CertificationController extends Controller
         try {
             Log::info('Certification Store Request:', $request->all());
 
+            // ✅ DECODE JSON achievements dulu
+            $achievements = json_decode($request->achievements, true);
+
             $validation = Validator::make($request->all(), [
                 'title' => 'required|string|max:255',
                 'issuing_organization' => 'required|string|max:255',
-                'organization_logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
                 'issue_date' => 'required|date',
                 'credential_url' => 'nullable|url',
                 'linkedin_certifications_url' => 'nullable|url',
                 'order' => 'nullable|integer|min:0',
                 'is_visible' => 'nullable|boolean',
-                'achievements' => 'nullable|array',
-                'achievements.*' => 'required|string',
+                'organization_logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             ]);
 
             if ($validation->fails()) {
@@ -73,14 +74,15 @@ class CertificationController extends Controller
 
             Log::info('Certification created:', ['id' => $certification->id]);
 
-            // Create achievements
-            if ($request->has('achievements') && is_array($request->achievements)) {
-                foreach ($request->achievements as $index => $achievement) {
-                    CertificationAchievement::create([
-                        'certification_id' => $certification->id,
-                        'achievement_text' => $achievement,
-                        'order' => $index + 1,
-                    ]);
+            // ✅ Create achievements dari decoded array
+            if ($achievements && is_array($achievements)) {
+                foreach ($achievements as $index => $achievementText) {
+                    if (!empty($achievementText)) {
+                        $certification->achievements()->create([
+                            'achievement_text' => $achievementText,
+                            'order' => $index + 1,
+                        ]);
+                    }
                 }
             }
 
@@ -117,17 +119,18 @@ class CertificationController extends Controller
         try {
             Log::info('Certification Update Request:', $request->all());
 
+            // ✅ DECODE JSON achievements dulu
+            $achievements = json_decode($request->achievements, true);
+
             $validation = Validator::make($request->all(), [
                 'title' => 'required|string|max:255',
                 'issuing_organization' => 'required|string|max:255',
-                'organization_logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
                 'issue_date' => 'required|date',
                 'credential_url' => 'nullable|url',
                 'linkedin_certifications_url' => 'nullable|url',
                 'order' => 'nullable|integer|min:0',
                 'is_visible' => 'nullable|boolean',
-                'achievements' => 'nullable|array',
-                'achievements.*' => 'required|string',
+                'organization_logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             ]);
 
             if ($validation->fails()) {
@@ -139,7 +142,6 @@ class CertificationController extends Controller
             }
 
             $certification = Certification::find($id);
-
             if (!$certification) {
                 return response()->json([
                     'success' => false,
@@ -168,17 +170,18 @@ class CertificationController extends Controller
                 'is_visible' => $request->boolean('is_visible', true),
             ]);
 
-            // Delete existing achievements
+            // Delete old achievements
             $certification->achievements()->delete();
 
-            // Recreate achievements
-            if ($request->has('achievements') && is_array($request->achievements)) {
-                foreach ($request->achievements as $index => $achievement) {
-                    CertificationAchievement::create([
-                        'certification_id' => $certification->id,
-                        'achievement_text' => $achievement,
-                        'order' => $index + 1,
-                    ]);
+            // Create new achievements
+            if ($achievements && is_array($achievements)) {
+                foreach ($achievements as $index => $achievementText) {
+                    if (!empty($achievementText)) {
+                        $certification->achievements()->create([
+                            'achievement_text' => $achievementText,
+                            'order' => $index + 1,
+                        ]);
+                    }
                 }
             }
 

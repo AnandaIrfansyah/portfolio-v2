@@ -33,24 +33,49 @@ class ExperienceController extends Controller
         try {
             Log::info('Experience Store Request:', $request->all());
 
+            // ✅ DECODE JSON positions dulu sebelum validasi
+            $positions = json_decode($request->positions, true);
+
             $validation = Validator::make($request->all(), [
                 'company_name' => 'required|string|max:255',
-                'company_logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
                 'company_url' => 'nullable|url',
                 'location' => 'required|string|max:255',
                 'location_type' => 'required|in:on_site,remote,hybrid',
                 'order' => 'nullable|integer|min:0',
                 'is_visible' => 'nullable|boolean',
-                'positions' => 'required|array|min:1',
-                'positions.*.position_title' => 'required|string|max:255',
-                'positions.*.employment_type' => 'required|in:full_time,part_time,self_employed,internship,contract,scholarship',
-                'positions.*.start_date' => 'required|date',
-                'positions.*.end_date' => 'nullable|date|after:positions.*.start_date',
-                'positions.*.is_current' => 'nullable|boolean',
-                'positions.*.badge_type' => 'nullable|in:current,scholarship',
-                'positions.*.achievements' => 'nullable|array',
-                'positions.*.achievements.*' => 'required|string',
+                'company_logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+                // ✅ Jangan validasi positions sebagai array dulu
             ]);
+
+            // ✅ Validasi positions secara manual setelah di-decode
+            if (!$positions || !is_array($positions)) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => ['positions' => ['Minimal harus ada 1 position.']]
+                ], 422);
+            }
+
+            // ✅ Validasi setiap position
+            foreach ($positions as $index => $position) {
+                if (empty($position['position_title'])) {
+                    return response()->json([
+                        'success' => false,
+                        'errors' => ['positions' => ["Position #" . ($index + 1) . " harus punya title."]]
+                    ], 422);
+                }
+                if (empty($position['employment_type'])) {
+                    return response()->json([
+                        'success' => false,
+                        'errors' => ['positions' => ["Position #" . ($index + 1) . " harus punya employment type."]]
+                    ], 422);
+                }
+                if (empty($position['start_date'])) {
+                    return response()->json([
+                        'success' => false,
+                        'errors' => ['positions' => ["Position #" . ($index + 1) . " harus punya start date."]]
+                    ], 422);
+                }
+            }
 
             if ($validation->fails()) {
                 Log::error('Validation failed:', $validation->errors()->toArray());
@@ -71,35 +96,35 @@ class ExperienceController extends Controller
                 'company_name' => $request->company_name,
                 'company_logo' => $logoPath,
                 'company_url' => $request->company_url,
-                'position_count' => count($request->positions),
                 'location' => $request->location,
                 'location_type' => $request->location_type,
+                'position_count' => count($positions), // ✅ Hitung dari decoded array
                 'order' => $request->order ?? 0,
                 'is_visible' => $request->boolean('is_visible', true),
             ]);
 
             Log::info('Experience created:', ['id' => $experience->id]);
 
-            // Create positions
-            if ($request->has('positions') && is_array($request->positions)) {
-                foreach ($request->positions as $index => $positionData) {
-                    $position = ExperiencePosition::create([
-                        'experience_id' => $experience->id,
-                        'position_title' => $positionData['position_title'],
-                        'employment_type' => $positionData['employment_type'],
-                        'start_date' => $positionData['start_date'],
-                        'end_date' => $positionData['end_date'] ?? null,
-                        'is_current' => $positionData['is_current'] ?? false,
-                        'badge_type' => $positionData['badge_type'] ?? null,
-                        'order' => $index + 1,
-                    ]);
+            // ✅ Loop positions dari decoded array
+            foreach ($positions as $index => $posData) {
+                $position = $experience->positions()->create([
+                    'position_title' => $posData['position_title'],
+                    'employment_type' => $posData['employment_type'],
+                    'start_date' => $posData['start_date'],
+                    'end_date' => $posData['end_date'] ?? null,
+                    'is_current' => $posData['is_current'] ?? false,
+                    'badge_type' => $posData['badge_type'] ?? null,
+                    'order' => $index + 1,
+                ]);
 
-                    // Create achievements for this position
-                    if (isset($positionData['achievements']) && is_array($positionData['achievements'])) {
-                        foreach ($positionData['achievements'] as $achIndex => $achievement) {
-                            ExperienceAchievement::create([
-                                'experience_position_id' => $position->id,
-                                'achievement_text' => $achievement,
+                Log::info('Position created:', ['id' => $position->id]);
+
+                // Create achievements for this position
+                if (isset($posData['achievements']) && is_array($posData['achievements'])) {
+                    foreach ($posData['achievements'] as $achIndex => $achievementText) {
+                        if (!empty($achievementText)) {
+                            $position->achievements()->create([
+                                'achievement_text' => $achievementText,
                                 'order' => $achIndex + 1,
                             ]);
                         }
@@ -140,25 +165,47 @@ class ExperienceController extends Controller
         try {
             Log::info('Experience Update Request:', $request->all());
 
+            // ✅ DECODE JSON positions dulu
+            $positions = json_decode($request->positions, true);
+
             $validation = Validator::make($request->all(), [
                 'company_name' => 'required|string|max:255',
-                'company_logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
                 'company_url' => 'nullable|url',
                 'location' => 'required|string|max:255',
                 'location_type' => 'required|in:on_site,remote,hybrid',
                 'order' => 'nullable|integer|min:0',
                 'is_visible' => 'nullable|boolean',
-                'positions' => 'required|array|min:1',
-                'positions.*.id' => 'nullable|exists:experience_positions,id',
-                'positions.*.position_title' => 'required|string|max:255',
-                'positions.*.employment_type' => 'required|in:full_time,part_time,self_employed,internship,contract,scholarship',
-                'positions.*.start_date' => 'required|date',
-                'positions.*.end_date' => 'nullable|date|after:positions.*.start_date',
-                'positions.*.is_current' => 'nullable|boolean',
-                'positions.*.badge_type' => 'nullable|in:current,scholarship',
-                'positions.*.achievements' => 'nullable|array',
-                'positions.*.achievements.*' => 'required|string',
+                'company_logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             ]);
+
+            // ✅ Validasi positions manual
+            if (!$positions || !is_array($positions)) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => ['positions' => ['Minimal harus ada 1 position.']]
+                ], 422);
+            }
+
+            foreach ($positions as $index => $position) {
+                if (empty($position['position_title'])) {
+                    return response()->json([
+                        'success' => false,
+                        'errors' => ['positions' => ["Position #" . ($index + 1) . " harus punya title."]]
+                    ], 422);
+                }
+                if (empty($position['employment_type'])) {
+                    return response()->json([
+                        'success' => false,
+                        'errors' => ['positions' => ["Position #" . ($index + 1) . " harus punya employment type."]]
+                    ], 422);
+                }
+                if (empty($position['start_date'])) {
+                    return response()->json([
+                        'success' => false,
+                        'errors' => ['positions' => ["Position #" . ($index + 1) . " harus punya start date."]]
+                    ], 422);
+                }
+            }
 
             if ($validation->fails()) {
                 Log::error('Validation failed:', $validation->errors()->toArray());
@@ -169,7 +216,6 @@ class ExperienceController extends Controller
             }
 
             $experience = Experience::find($id);
-
             if (!$experience) {
                 return response()->json([
                     'success' => false,
@@ -191,36 +237,37 @@ class ExperienceController extends Controller
                 'company_name' => $request->company_name,
                 'company_logo' => $logoPath,
                 'company_url' => $request->company_url,
-                'position_count' => count($request->positions),
                 'location' => $request->location,
                 'location_type' => $request->location_type,
+                'position_count' => count($positions),
                 'order' => $request->order ?? 0,
                 'is_visible' => $request->boolean('is_visible', true),
             ]);
 
-            // Delete existing positions (cascade will delete achievements)
+            // Delete old positions and achievements
+            foreach ($experience->positions as $oldPosition) {
+                $oldPosition->achievements()->delete();
+            }
             $experience->positions()->delete();
 
-            // Recreate positions
-            if ($request->has('positions') && is_array($request->positions)) {
-                foreach ($request->positions as $index => $positionData) {
-                    $position = ExperiencePosition::create([
-                        'experience_id' => $experience->id,
-                        'position_title' => $positionData['position_title'],
-                        'employment_type' => $positionData['employment_type'],
-                        'start_date' => $positionData['start_date'],
-                        'end_date' => $positionData['end_date'] ?? null,
-                        'is_current' => $positionData['is_current'] ?? false,
-                        'badge_type' => $positionData['badge_type'] ?? null,
-                        'order' => $index + 1,
-                    ]);
+            // Create new positions
+            foreach ($positions as $index => $posData) {
+                $position = $experience->positions()->create([
+                    'position_title' => $posData['position_title'],
+                    'employment_type' => $posData['employment_type'],
+                    'start_date' => $posData['start_date'],
+                    'end_date' => $posData['end_date'] ?? null,
+                    'is_current' => $posData['is_current'] ?? false,
+                    'badge_type' => $posData['badge_type'] ?? null,
+                    'order' => $index + 1,
+                ]);
 
-                    // Create achievements
-                    if (isset($positionData['achievements']) && is_array($positionData['achievements'])) {
-                        foreach ($positionData['achievements'] as $achIndex => $achievement) {
-                            ExperienceAchievement::create([
-                                'experience_position_id' => $position->id,
-                                'achievement_text' => $achievement,
+                // Create achievements
+                if (isset($posData['achievements']) && is_array($posData['achievements'])) {
+                    foreach ($posData['achievements'] as $achIndex => $achievementText) {
+                        if (!empty($achievementText)) {
+                            $position->achievements()->create([
+                                'achievement_text' => $achievementText,
                                 'order' => $achIndex + 1,
                             ]);
                         }

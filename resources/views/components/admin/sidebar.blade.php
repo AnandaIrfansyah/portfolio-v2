@@ -30,6 +30,12 @@
                 </a>
             </li>
 
+            <li class="nav-item {{ Request::is('menu/contact') ? 'active' : '' }}">
+                <a href="{{ route('contacts.index') }}" class="nav-link">
+                    <i class="fas fa-phone"></i> <span>Contact</span>
+                </a>
+            </li>
+
             {{-- <li
                 class="nav-item dropdown {{ Request::is('menu/about*') || Request::is('menu/educations*') || Request::is('menu/certifications*') ? 'active' : '' }}">
                 <a href="#" class="nav-link has-dropdown">

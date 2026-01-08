@@ -1002,7 +1002,6 @@ body {
     cursor: pointer;
 }
 
-
 .btn-support i {
     font-size: 1.125rem;
     animation: heartbeat 1.5s ease-in-out infinite;
@@ -1025,7 +1024,6 @@ body {
 /* ==========================================
    PROJECT PAGE - SEARCH
    ========================================== */
-
 
 /* ==========================================
    BACK TO TOP BUTTON
@@ -1501,10 +1499,20 @@ body {
     width: 56px;
     height: 56px;
     border-radius: 0.75rem;
-    object-fit: cover;
+
     background-color: #1a1a1a;
     border: 1px solid #262626;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
+}
+
+.timeline-logo img {
+    width: 85%; /* 🔑 ini kuncinya */
+    height: 85%;
+    object-fit: contain;
 }
 
 .timeline-info {
@@ -1633,7 +1641,8 @@ body {
 .achievements-list {
     display: none;
     margin-top: 1.25rem;
-    padding-left: 0.5rem;
+    padding-left: 1.75rem;
+    border-left: 2px solid #1f2937;
 }
 
 .achievements-list.show {
@@ -1641,20 +1650,23 @@ body {
 }
 
 .achievement-item {
-    color: #d1d5db;
-    font-size: 0.9375rem;
-    line-height: 1.7;
-    margin-bottom: 0.75rem;
-    padding-left: 1.25rem;
     position: relative;
+    padding-left: 1rem;
+    margin-bottom: 0.75rem;
+    color: #d1d5db;
+    font-size: 0.875rem;
+    line-height: 1.6;
 }
 
-.achievement-item:before {
-    content: "•";
+.achievement-item::before {
+    content: "";
     position: absolute;
-    left: 0;
-    color: #2563eb;
-    font-size: 1.25rem;
+    left: -1.1rem;
+    top: 0.6em;
+    width: 6px;
+    height: 6px;
+    background-color: #2563eb;
+    border-radius: 999px;
 }
 
 .credential-actions {
@@ -1916,15 +1928,32 @@ body {
 
 .section-header-left {
     display: flex;
-    align-items: center;
+    align-items: center; /* ini kunci sejajarnya */
     gap: 0.75rem;
-    flex-wrap: wrap;
 }
 
+/* icon wrapper */
+.section-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* icon itu sendiri */
+.section-icon i {
+    font-size: 1.6rem;
+    line-height: 1;
+    display: block;
+    margin-top: 4px;
+}
+
+/* judul */
 .guestbook-section .section-title {
     font-size: 1.5rem;
     font-weight: 600;
     color: #ffffff;
+    line-height: 1.2; /* biar sejajar icon */
+    margin: 0; /* hapus margin default h tag */
 }
 
 .message-count {
