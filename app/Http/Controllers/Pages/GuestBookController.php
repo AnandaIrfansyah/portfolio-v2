@@ -7,6 +7,7 @@ use App\Models\GuestbookLike;
 use App\Models\GuestbookMessage;
 use App\Models\GuestbookUser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -22,6 +23,12 @@ class GuestBookController extends Controller
     public function index()
     {
         $guestUserId = Session::get('guestbook_user_id');
+        Log::info('Guestbook index session check:', [
+            'session_id' => Session::getId(),
+            'guest_user_id' => $guestUserId,
+        ]);
+
+
         $guestUser = $guestUserId ? GuestbookUser::find($guestUserId) : null;
 
         $messages = GuestbookMessage::with(['user', 'replies.user', 'replies.likes', 'likes'])
@@ -54,12 +61,18 @@ class GuestBookController extends Controller
                 ]
             );
 
-            // Simpan ID saja, bukan full object
             Session::put('guestbook_user_id', $guestUser->id);
+            Session::save(); // ← tambahkan ini
+
+            Log::info('Session after login:', [
+                'session_id' => Session::getId(),
+                'guest_user_id' => Session::get('guestbook_user_id'),
+            ]);
 
             return redirect()->route('guestbook.index');
         } catch (\Exception $e) {
-            return redirect()->route('guestbook.index')->with('error', 'Login failed. Please try again.');
+            Log::error('OAuth error: ' . $e->getMessage());
+            return redirect()->route('guestbook.index')->with('error', 'Login failed.');
         }
     }
 
