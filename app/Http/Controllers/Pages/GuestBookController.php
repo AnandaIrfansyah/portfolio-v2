@@ -12,15 +12,24 @@ use Laravel\Socialite\Facades\Socialite;
 
 class GuestBookController extends Controller
 {
+    // Buat helper private method biar tidak duplikat kode
+    private function getGuestUser()
+    {
+        $id = Session::get('guestbook_user_id');
+        return $id ? GuestbookUser::find($id) : null;
+    }
+
     public function index()
     {
+        $guestUserId = Session::get('guestbook_user_id');
+        $guestUser = $guestUserId ? GuestbookUser::find($guestUserId) : null;
+
         $messages = GuestbookMessage::with(['user', 'replies.user', 'replies.likes', 'likes'])
             ->whereNull('parent_id')
             ->latest()
             ->paginate(20);
 
         $totalMessages = GuestbookMessage::whereNull('parent_id')->count();
-        $guestUser = Session::get('guestbook_user');
 
         return view('pages.guestbook.index', compact('messages', 'totalMessages', 'guestUser'));
     }
@@ -45,7 +54,8 @@ class GuestBookController extends Controller
                 ]
             );
 
-            Session::put('guestbook_user', $guestUser);
+            // Simpan ID saja, bukan full object
+            Session::put('guestbook_user_id', $guestUser->id);
 
             return redirect()->route('guestbook.index');
         } catch (\Exception $e) {
@@ -55,14 +65,14 @@ class GuestBookController extends Controller
 
     public function logout()
     {
-        Session::forget('guestbook_user');
+        Session::forget('guestbook_user_id');
         return redirect()->route('guestbook.index');
     }
 
     // ===== MESSAGES =====
     public function store(Request $request)
     {
-        $guestUser = Session::get('guestbook_user');
+        $guestUser = $this->getGuestUser();
         if (!$guestUser) {
             return response()->json(['success' => false, 'message' => 'Please login first.'], 401);
         }
@@ -82,7 +92,7 @@ class GuestBookController extends Controller
 
     public function update(Request $request, $id)
     {
-        $guestUser = Session::get('guestbook_user');
+        $guestUser = $this->getGuestUser();
         if (!$guestUser) {
             return response()->json(['success' => false, 'message' => 'Unauthorized.'], 401);
         }
@@ -101,7 +111,7 @@ class GuestBookController extends Controller
 
     public function destroy($id)
     {
-        $guestUser = Session::get('guestbook_user');
+        $guestUser = $this->getGuestUser();
         if (!$guestUser) {
             return response()->json(['success' => false, 'message' => 'Unauthorized.'], 401);
         }
@@ -121,7 +131,7 @@ class GuestBookController extends Controller
     // ===== LIKES =====
     public function toggleLike($id)
     {
-        $guestUser = Session::get('guestbook_user');
+        $guestUser = $this->getGuestUser();
         if (!$guestUser) {
             return response()->json(['success' => false, 'message' => 'Please login first.'], 401);
         }
