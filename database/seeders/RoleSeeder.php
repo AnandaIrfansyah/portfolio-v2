@@ -21,7 +21,7 @@ class RoleSeeder extends Seeder
 
         // Create author user
         $author = User::firstOrCreate(
-            ['email' => 'anndairfnsyh@gmail.com'],
+            ['email' => 'anndairfansyah@gmail.com'],
             [
                 'name' => 'Ananda Irfansyah',
                 'password' => Hash::make('password'),

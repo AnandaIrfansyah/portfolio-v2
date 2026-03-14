@@ -3,90 +3,6 @@
 @push('style')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
-        .message-card {
-            padding: 1rem;
-            border: 1px solid #dee2e6;
-            border-radius: 0.5rem;
-            margin-bottom: 1rem;
-            background: #fff;
-        }
-
-        .message-header {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .message-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #6777ef;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            font-weight: 700;
-            flex-shrink: 0;
-            overflow: hidden;
-        }
-
-        .message-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 50%;
-        }
-
-        .author-badge {
-            font-size: 0.7rem;
-            padding: 0.15rem 0.5rem;
-            border-radius: 999px;
-            background: #6777ef;
-            color: #fff;
-        }
-
-        .message-content {
-            color: #495057;
-            font-size: 0.9rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .message-meta {
-            font-size: 0.8rem;
-            color: #6c757d;
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .reply-section {
-            background: #f8f9fa;
-            border-left: 3px solid #6777ef;
-            padding: 1rem;
-            border-radius: 0 0.375rem 0.375rem 0;
-            margin-top: 0.75rem;
-        }
-
-        .reply-item {
-            margin-bottom: 0.75rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 1px solid #dee2e6;
-        }
-
-        .reply-item:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-
-        .reply-form {
-            margin-top: 0.75rem;
-            display: none;
-        }
-
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -111,6 +27,132 @@
             font-size: 0.8rem;
             color: #6c757d;
             text-transform: uppercase;
+        }
+
+        .message-card {
+            border: 1px solid #dee2e6;
+            border-radius: 0.5rem;
+            margin-bottom: 0.75rem;
+            background: #fff;
+            overflow: hidden;
+        }
+
+        .message-card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .message-card-header:hover {
+            background: #f8f9fa;
+        }
+
+        .message-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #6777ef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .message-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .author-badge {
+            font-size: 0.7rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 999px;
+            background: #6777ef;
+            color: #fff;
+        }
+
+        .message-preview {
+            font-size: 0.875rem;
+            color: #6c757d;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 300px;
+        }
+
+        .message-card-body {
+            padding: 0 1rem 1rem;
+            border-top: 1px solid #f1f3f5;
+            display: none;
+        }
+
+        .message-card-body.show {
+            display: block;
+        }
+
+        .message-full {
+            padding: 0.875rem 0;
+            font-size: 0.9rem;
+            color: #495057;
+            border-bottom: 1px solid #f1f3f5;
+        }
+
+        .message-meta {
+            font-size: 0.8rem;
+            color: #6c757d;
+            display: flex;
+            gap: 1rem;
+            padding: 0.5rem 0;
+        }
+
+        .reply-section {
+            background: #f8f9fa;
+            border-left: 3px solid #6777ef;
+            padding: 0.875rem;
+            border-radius: 0 0.375rem 0.375rem 0;
+            margin-top: 0.75rem;
+        }
+
+        .reply-item {
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .reply-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .reply-form {
+            margin-top: 0.75rem;
+            display: none;
+        }
+
+        .card-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+
+        .toggle-icon {
+            transition: transform 0.2s;
+            color: #6c757d;
+        }
+
+        .toggle-icon.open {
+            transform: rotate(180deg);
         }
     </style>
 @endpush
@@ -145,12 +187,12 @@
                     </div>
                 </div>
 
-                {{-- Messages --}}
                 <div class="card">
                     <div class="card-body">
                         @forelse($messages as $msg)
                             <div class="message-card" id="admin-msg-{{ $msg->id }}">
-                                <div class="message-header">
+                                {{-- Header (clickable untuk expand) --}}
+                                <div class="message-card-header" onclick="toggleCard({{ $msg->id }})">
                                     <div class="message-avatar">
                                         @if ($msg->user?->avatar)
                                             <img src="{{ $msg->user->avatar }}" alt="">
@@ -158,81 +200,98 @@
                                             {{ strtoupper(substr($msg->user->name ?? '?', 0, 1)) }}
                                         @endif
                                     </div>
-                                    <div class="flex-grow-1">
-                                        <strong>{{ $msg->user->name ?? 'Anonymous' }}</strong>
-                                        @if ($msg->is_author)
-                                            <span class="author-badge">Author</span>
-                                        @endif
-                                        <div class="text-muted small">
-                                            {{ $msg->user->email ?? '-' }} ·
-                                            {{ $msg->user->provider ?? '' }} ·
-                                            {{ $msg->created_at->format('d M Y, H:i') }}
+                                    <div style="flex:1; min-width:0;">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <strong class="small">{{ $msg->user->name ?? 'Anonymous' }}</strong>
+                                            @if ($msg->is_author)
+                                                <span class="author-badge">Author</span>
+                                            @endif
+                                            <span class="text-muted" style="font-size:0.75rem">
+                                                &nbsp; - &nbsp;<i
+                                                    class="bi bi-{{ $msg->user?->provider === 'github' ? 'github' : 'google' }}"></i>
+                                                {{ $msg->user?->provider ?? '' }}
+                                            </span>
                                         </div>
+                                        <div class="message-preview">{{ $msg->message }}</div>
                                     </div>
-                                    <div class="d-flex gap-2">
+                                    <div class="card-actions" onclick="event.stopPropagation()">
+                                        <span class="badge badge-light">
+                                            <i class="bi bi-heart text-danger"></i> {{ $msg->likes->count() }}
+                                        </span>
+                                        <span class="badge badge-{{ $msg->replies->count() > 0 ? 'success' : 'light' }}">
+                                            <i class="bi bi-reply"></i> {{ $msg->replies->count() }}
+                                        </span>
+                                        <small
+                                            class="text-muted d-none d-md-block">{{ $msg->created_at->format('d M Y') }}</small>
                                         <button class="btn btn-primary btn-sm"
                                             onclick="toggleReplyForm({{ $msg->id }})">
-                                            <i class="bi bi-reply"></i> Reply
+                                            <i class="bi bi-reply"></i>
                                         </button>
                                         <button class="btn btn-danger btn-sm"
                                             onclick="adminDeleteMsg({{ $msg->id }})">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </div>
+                                    <i class="bi bi-chevron-down toggle-icon ml-2"
+                                        id="toggle-icon-{{ $msg->id }}"></i>
                                 </div>
 
-                                <div class="message-content">{{ $msg->message }}</div>
-
-                                <div class="message-meta">
-                                    <span><i class="bi bi-heart"></i> {{ $msg->likes->count() }} likes</span>
-                                    <span><i class="bi bi-reply"></i> {{ $msg->replies->count() }} replies</span>
-                                </div>
-
-                                {{-- Replies --}}
-                                @if ($msg->replies->count() > 0)
-                                    <div class="reply-section">
-                                        @foreach ($msg->replies as $reply)
-                                            <div class="reply-item" id="admin-reply-{{ $reply->id }}">
-                                                <div class="d-flex align-items-start gap-2">
-                                                    <div class="message-avatar"
-                                                        style="width:32px;height:32px;font-size:0.75rem;">
-                                                        @if ($reply->user?->avatar)
-                                                            <img src="{{ $reply->user->avatar }}" alt="">
-                                                        @else
-                                                            {{ strtoupper(substr($reply->user->name ?? '?', 0, 1)) }}
-                                                        @endif
-                                                    </div>
-                                                    <div class="flex-grow-1">
-                                                        <div>
-                                                            <strong
-                                                                class="small">{{ $reply->user->name ?? 'Anonymous' }}</strong>
-                                                            @if ($reply->is_author)
-                                                                <span class="author-badge">Author</span>
-                                                            @endif
-                                                            <span
-                                                                class="text-muted small ml-2">{{ $reply->created_at->format('d M Y, H:i') }}</span>
-                                                        </div>
-                                                        <div class="text-muted small mt-1">{{ $reply->message }}</div>
-                                                    </div>
-                                                    <button class="btn btn-danger btn-sm"
-                                                        onclick="adminDeleteMsg({{ $reply->id }})">
-                                                        <i class="bi bi-trash"></i>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        @endforeach
+                                {{-- Body (collapsed by default) --}}
+                                <div class="message-card-body" id="card-body-{{ $msg->id }}">
+                                    <div class="message-full">
+                                        <div class="text-muted small mb-1">
+                                            {{ $msg->user->email ?? '' }} · {{ $msg->created_at->format('d M Y, H:i') }}
+                                        </div>
+                                        {{ $msg->message }}
                                     </div>
-                                @endif
 
-                                {{-- Reply Form --}}
-                                <div class="reply-form" id="reply-form-{{ $msg->id }}">
-                                    <textarea class="form-control" id="reply-text-{{ $msg->id }}" rows="2" placeholder="Write a reply..."></textarea>
-                                    <div class="mt-2 d-flex gap-2">
-                                        <button class="btn btn-primary btn-sm" onclick="submitReply({{ $msg->id }})">
-                                            <i class="bi bi-send"></i> Send Reply
-                                        </button>
-                                        <button class="btn btn-secondary btn-sm"
-                                            onclick="toggleReplyForm({{ $msg->id }})">Cancel</button>
+                                    {{-- Replies --}}
+                                    @if ($msg->replies->count() > 0)
+                                        <div class="reply-section">
+                                            @foreach ($msg->replies as $reply)
+                                                <div class="reply-item" id="admin-reply-{{ $reply->id }}">
+                                                    <div class="d-flex align-items-start gap-2">
+                                                        <div class="message-avatar"
+                                                            style="width:32px;height:32px;font-size:0.75rem;">
+                                                            @if ($reply->user?->avatar)
+                                                                <img src="{{ $reply->user->avatar }}" alt="">
+                                                            @else
+                                                                {{ strtoupper(substr($reply->user->name ?? '?', 0, 1)) }}
+                                                            @endif
+                                                        </div>
+                                                        <div class="flex-grow-1">
+                                                            <div class="d-flex align-items-center gap-1">
+                                                                <strong
+                                                                    class="small">{{ $reply->user->name ?? 'Anonymous' }}</strong>
+                                                                @if ($reply->is_author)
+                                                                    <span class="author-badge">Author</span>
+                                                                @endif
+                                                                <span
+                                                                    class="text-muted small ml-auto">{{ $reply->created_at->format('d M Y, H:i') }}</span>
+                                                            </div>
+                                                            <div class="text-muted small mt-1">{{ $reply->message }}</div>
+                                                        </div>
+                                                        <button class="btn btn-danger btn-sm"
+                                                            onclick="adminDeleteMsg({{ $reply->id }})">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @endif
+
+                                    {{-- Reply Form --}}
+                                    <div class="reply-form" id="reply-form-{{ $msg->id }}">
+                                        <textarea class="form-control mt-2" id="reply-text-{{ $msg->id }}" rows="2" placeholder="Write a reply..."></textarea>
+                                        <div class="mt-2 d-flex gap-2">
+                                            <button class="btn btn-primary btn-sm"
+                                                onclick="submitReply({{ $msg->id }})">
+                                                <i class="bi bi-send"></i> Send Reply
+                                            </button>
+                                            <button class="btn btn-secondary btn-sm"
+                                                onclick="toggleReplyForm({{ $msg->id }})">Cancel</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -262,11 +321,32 @@
             showConfirmButton: false,
             timer: 2000
         });
-        const BASE = "{{ route('guestbook.index') }}";
+        const BASE = "{{ route('guestbooks.index') }}";
 
+        // Toggle expand/collapse card
+        function toggleCard(id) {
+            const body = document.getElementById(`card-body-${id}`);
+            const icon = document.getElementById(`toggle-icon-${id}`);
+            body.classList.toggle('show');
+            icon.classList.toggle('open');
+        }
+
+        // Toggle reply form — auto expand card dulu
         function toggleReplyForm(id) {
+            const body = document.getElementById(`card-body-${id}`);
+            const icon = document.getElementById(`toggle-icon-${id}`);
             const form = document.getElementById(`reply-form-${id}`);
+
+            // Expand card kalau belum terbuka
+            if (!body.classList.contains('show')) {
+                body.classList.add('show');
+                icon.classList.add('open');
+            }
+
             form.style.display = form.style.display === 'none' || form.style.display === '' ? 'block' : 'none';
+            if (form.style.display === 'block') {
+                document.getElementById(`reply-text-${id}`).focus();
+            }
         }
 
         function submitReply(id) {

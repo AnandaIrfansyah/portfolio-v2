@@ -38,7 +38,7 @@
 
             <li class="nav-item {{ Request::is('menu/guestbook') ? 'active' : '' }}">
                 <a href="{{ route('guestbooks.index') }}" class="nav-link">
-                    <i class="bi bi-chat-left-quote"></i> <span>Guestbook</span>
+                    <i class="fas fa-book-open"></i> <span>Guestbook</span>
                 </a>
             </li>
 

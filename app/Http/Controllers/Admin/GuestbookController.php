@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\GuestbookMessage;
 use App\Models\GuestbookUser;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class GuestbookController extends Controller
@@ -34,11 +35,22 @@ class GuestbookController extends Controller
             return response()->json(['success' => false, 'message' => 'Message not found.'], 404);
         }
 
-        // Ambil atau buat GuestbookUser untuk admin
+        // Ambil data dari tabel users
+        $user = User::first(); // atau Auth::user()
+
         $adminUser = GuestbookUser::firstOrCreate(
             ['provider' => 'admin', 'provider_id' => 'admin'],
-            ['name' => config('app.name') . ' (Admin)', 'email' => null, 'avatar' => null]
+            [
+                'name'   => $user->name,
+                'email'  => $user->email,
+                'avatar' => $user->avatar ? asset('storage/' . $user->avatar) : null,
+            ]
         );
+
+        $adminUser->update([
+            'name'   => $user->name,
+            'avatar' => $user->avatar ? asset('storage/' . $user->avatar) : null,
+        ]);
 
         $reply = GuestbookMessage::create([
             'guestbook_user_id' => $adminUser->id,
