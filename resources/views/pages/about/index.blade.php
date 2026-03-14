@@ -326,7 +326,10 @@
 
         // Toggle achievements
         function toggleAchievements(button) {
-            const achievementsList = button.nextElementSibling;
+            // Cari achievements-list di dalam parent .timeline-item yang sama
+            const timelineItem = button.closest('.timeline-item');
+            const achievementsList = timelineItem.querySelector('.achievements-list');
+
             const icon = button.querySelector('i');
             const text = button.querySelector('span');
 

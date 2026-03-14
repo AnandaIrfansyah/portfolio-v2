@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\CertificationController;
 use App\Http\Controllers\Admin\ContactController as AdminContactController;
 use App\Http\Controllers\Admin\EducationController;
 use App\Http\Controllers\Admin\ExperienceController;
+use App\Http\Controllers\Admin\GuestbookController as AdminGuestbookController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\ProjectCategoryController;
 use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
@@ -52,8 +53,17 @@ Route::prefix('contact')->group(function () {
     Route::get('/', [ContactController::class, 'index'])->name('contact.index');
     Route::post('/', [ContactController::class, 'store'])->name('contact.store');
 });
-Route::prefix('guestbook')->group(function () {
-    Route::get('/', [GuestBookController::class, 'index'])->name('guestbook.index');
+Route::prefix('guestbook')->name('guestbook.')->group(function () {
+    Route::get('/', [GuestBookController::class, 'index'])->name('index');
+    Route::post('/messages', [GuestBookController::class, 'store'])->name('messages.store');
+    Route::put('/messages/{id}', [GuestBookController::class, 'update'])->name('messages.update');
+    Route::delete('/messages/{id}', [GuestBookController::class, 'destroy'])->name('messages.destroy');
+    Route::post('/messages/{id}/like', [GuestBookController::class, 'toggleLike'])->name('messages.like');
+
+    // OAuth
+    Route::get('/auth/{provider}/redirect', [GuestBookController::class, 'redirectToProvider'])->name('auth.redirect');
+    Route::get('/auth/{provider}/callback', [GuestBookController::class, 'handleProviderCallback'])->name('auth.callback');
+    Route::post('/logout', [GuestBookController::class, 'logout'])->name('logout');
 });
 
 
@@ -177,12 +187,18 @@ Route::middleware(['auth', 'role:author'])->group(
             });
 
             // Contact Management
-            Route::prefix('contacts')->name('contacts.')->group(function () {
+            Route::prefix('contact')->name('contacts.')->group(function () {
                 Route::get('/', [AdminContactController::class, 'index'])->name('index');
                 Route::get('/{id}/show', [AdminContactController::class, 'show'])->name('show');
                 Route::post('/{id}/update-status', [AdminContactController::class, 'updateStatus'])->name('update-status');
                 Route::delete('/{id}/destroy', [AdminContactController::class, 'destroy'])->name('destroy');
                 Route::post('/bulk-delete', [AdminContactController::class, 'bulkDelete'])->name('bulk-delete');
+            });
+
+            Route::prefix('guestbook')->name('guestbooks.')->group(function () {
+                Route::get('/', [AdminGuestbookController::class, 'index'])->name('index');
+                Route::post('/{id}/reply', [AdminGuestbookController::class, 'reply'])->name('reply');
+                Route::delete('/{id}/destroy', [AdminGuestbookController::class, 'destroy'])->name('destroy');
             });
         });
     }

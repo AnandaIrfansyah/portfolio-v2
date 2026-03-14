@@ -68,7 +68,7 @@
                     @endif
 
                     @if ($user->support_url)
-                        <a href="{{ $user->support_url }}" target="_blank" class="btn btn-support">
+                        <a href="{{ $user->support_url }}" target="_blank" class="btn btn-github">
                             <i class="bi bi-heart-fill"></i>
                             <span>Support</span>
                         </a>

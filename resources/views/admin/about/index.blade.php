@@ -753,10 +753,10 @@
                                 <strong><i class="bi bi-file-pdf"></i> CV PDF:</strong>
                                 ${d.cv_pdf_file ?
                                     `<div class="mt-2">
-                                                                                                                <a href="/storage/${d.cv_pdf_file}" target="_blank" class="btn btn-sm btn-outline-danger">
-                                                                                                                    <i class="bi bi-download"></i> Download PDF
-                                                                                                                </a>
-                                                                                                            </div>` :
+                                                                                                                                    <a href="/storage/${d.cv_pdf_file}" target="_blank" class="btn btn-sm btn-outline-danger">
+                                                                                                                                        <i class="bi bi-download"></i> Download PDF
+                                                                                                                                    </a>
+                                                                                                                                </div>` :
                                     '<p class="text-muted mt-2">No PDF uploaded</p>'
                                 }
                             </div>
@@ -764,10 +764,10 @@
                                 <strong><i class="bi bi-file-word"></i> CV Google Docs:</strong>
                                 ${d.cv_word_url ?
                                     `<div class="mt-2">
-                                                                                                                <a href="${d.cv_word_url}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                                                                                                    <i class="bi bi-box-arrow-up-right"></i> Open Google Docs
-                                                                                                                </a>
-                                                                                                            </div>` :
+                                                                                                                                    <a href="${d.cv_word_url}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                                                                                                        <i class="bi bi-box-arrow-up-right"></i> Open Google Docs
+                                                                                                                                    </a>
+                                                                                                                                </div>` :
                                     '<p class="text-muted mt-2">No Google Docs URL</p>'
                                 }
                             </div>
@@ -1224,6 +1224,11 @@
 
         // ====================== EDIT & DELETE EXPERIENCE ======================
 
+        function formatDateInput(date) {
+            if (!date) return '';
+            return date.toString().substring(0, 10); // Ambil "YYYY-MM-DD" saja
+        }
+
         function editExperience(id) {
             $.ajax({
                 // PERBAIKAN: URL ditulis rapi dengan backticks
@@ -1271,8 +1276,8 @@
                         // Isi datanya
                         currentPos.find(".position-title").val(pos.position_title);
                         currentPos.find(".position-employment-type").val(pos.employment_type);
-                        currentPos.find(".position-start-date").val(pos.start_date);
-                        currentPos.find(".position-end-date").val(pos.end_date);
+                        currentPos.find(".position-start-date").val(formatDateInput(pos.start_date));
+                        currentPos.find(".position-end-date").val(formatDateInput(pos.end_date));
                         currentPos.find(".position-is-current").prop("checked", pos.is_current);
                         currentPos.find(".position-badge-type").val(pos.badge_type);
 
@@ -1545,8 +1550,8 @@
                     $("#edu_degree").val(d.degree);
                     $("#edu_field_of_study").val(d.field_of_study);
                     $("#edu_location").val(d.location);
-                    $("#edu_start_date").val(d.start_date);
-                    $("#edu_end_date").val(d.end_date);
+                    $("#edu_start_date").val(formatDateInput(d.start_date));
+                    $("#edu_end_date").val(formatDateInput(d.end_date));
                     $("#edu_gpa").val(d.gpa);
                     $("#edu_order").val(d.order);
                     $("#edu_is_visible").prop("checked", d.is_visible);
@@ -1819,7 +1824,7 @@
                     $("#certification_type").val("update");
                     $("#cert_title").val(d.title);
                     $("#cert_issuing_organization").val(d.issuing_organization);
-                    $("#cert_issue_date").val(d.issue_date);
+                    $("#cert_issue_date").val(formatDateInput(d.issue_date));
                     $("#cert_credential_url").val(d.credential_url);
                     $("#cert_linkedin_url").val(d.linkedin_certifications_url);
                     $("#cert_order").val(d.order);

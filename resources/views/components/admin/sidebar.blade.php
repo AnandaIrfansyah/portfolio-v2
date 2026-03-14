@@ -36,6 +36,12 @@
                 </a>
             </li>
 
+            <li class="nav-item {{ Request::is('menu/guestbook') ? 'active' : '' }}">
+                <a href="{{ route('guestbooks.index') }}" class="nav-link">
+                    <i class="bi bi-chat-left-quote"></i> <span>Guestbook</span>
+                </a>
+            </li>
+
             {{-- <li
                 class="nav-item dropdown {{ Request::is('menu/about*') || Request::is('menu/educations*') || Request::is('menu/certifications*') ? 'active' : '' }}">
                 <a href="#" class="nav-link has-dropdown">
