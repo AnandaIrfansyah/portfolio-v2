@@ -84,82 +84,102 @@
             <div class="command-section">
                 <div class="command-section-title">SOCIALS</div>
 
-                <a href="mailto:ananda@example.com" class="command-item">
-                    <div class="command-item-left">
-                        <i class="bi bi-envelope-fill command-item-icon"></i>
-                        <span class="command-item-text">Email</span>
-                    </div>
-                    <span class="command-item-badge">Link</span>
-                </a>
+                @if ($commandUser?->email)
+                    <a href="mailto:{{ $commandUser->email }}" class="command-item">
+                        <div class="command-item-left">
+                            <i class="bi bi-envelope-fill command-item-icon"></i>
+                            <span class="command-item-text">Email</span>
+                        </div>
+                        <span class="command-item-badge">Link</span>
+                    </a>
+                @endif
 
-                <a href="https://github.com/anandairfansyah" target="_blank" class="command-item">
-                    <div class="command-item-left">
-                        <i class="bi bi-github command-item-icon"></i>
-                        <span class="command-item-text">GitHub</span>
-                    </div>
-                    <span class="command-item-badge">Link</span>
-                </a>
+                @if ($commandUser?->github_url)
+                    <a href="{{ $commandUser->github_url }}" target="_blank" class="command-item">
+                        <div class="command-item-left">
+                            <i class="bi bi-github command-item-icon"></i>
+                            <span class="command-item-text">GitHub</span>
+                        </div>
+                        <span class="command-item-badge">Link</span>
+                    </a>
+                @endif
 
-                <a href="https://linkedin.com/in/anandairfansyah" target="_blank" class="command-item">
-                    <div class="command-item-left">
-                        <i class="bi bi-linkedin command-item-icon"></i>
-                        <span class="command-item-text">LinkedIn</span>
-                    </div>
-                    <span class="command-item-badge">Link</span>
-                </a>
+                @if ($commandUser?->linkedin_url)
+                    <a href="{{ $commandUser->linkedin_url }}" target="_blank" class="command-item">
+                        <div class="command-item-left">
+                            <i class="bi bi-linkedin command-item-icon"></i>
+                            <span class="command-item-text">LinkedIn</span>
+                        </div>
+                        <span class="command-item-badge">Link</span>
+                    </a>
+                @endif
 
-                <a href="https://instagram.com/anndairfnsyh_" target="_blank" class="command-item">
-                    <div class="command-item-left">
-                        <i class="bi bi-instagram command-item-icon"></i>
-                        <span class="command-item-text">Instagram</span>
-                    </div>
-                    <span class="command-item-badge">Link</span>
-                </a>
+                @if ($commandUser?->twitter_url)
+                    <a href="{{ $commandUser->twitter_url }}" target="_blank" class="command-item">
+                        <div class="command-item-left">
+                            <i class="bi bi-instagram command-item-icon"></i>
+                            <span class="command-item-text">Instagram</span>
+                        </div>
+                        <span class="command-item-badge">Link</span>
+                    </a>
+                @endif
 
-                <a href="https://twitter.com/anandairfansyah" target="_blank" class="command-item">
-                    <div class="command-item-left">
-                        <i class="bi bi-twitter command-item-icon"></i>
-                        <span class="command-item-text">X (Twitter)</span>
-                    </div>
-                    <span class="command-item-badge">Link</span>
-                </a>
+                @if ($commandUser?->website_url)
+                    <a href="{{ $commandUser->website_url }}" target="_blank" class="command-item">
+                        <div class="command-item-left">
+                            <i class="bi bi-globe command-item-icon"></i>
+                            <span class="command-item-text">Website</span>
+                        </div>
+                        <span class="command-item-badge">Link</span>
+                    </a>
+                @endif
             </div>
 
             <!-- EXTERNAL LINKS -->
             <div class="command-section">
                 <div class="command-section-title">EXTERNAL LINKS</div>
 
-                <a href="#" class="command-item">
-                    <div class="command-item-left">
-                        <i class="bi bi-heart-fill command-item-icon"></i>
-                        <span class="command-item-text">Support</span>
-                    </div>
-                    <span class="command-item-badge">Link</span>
-                </a>
+                @if ($commandUser?->support_url)
+                    <a href="{{ $commandUser->support_url }}" target="_blank" class="command-item">
+                        <div class="command-item-left">
+                            <i class="bi bi-heart-fill command-item-icon"></i>
+                            <span class="command-item-text">Support</span>
+                        </div>
+                        <span class="command-item-badge">Link</span>
+                    </a>
+                @endif
 
-                <a href="#" class="command-item">
-                    <div class="command-item-left">
-                        <i class="bi bi-file-pdf command-item-icon"></i>
-                        <span class="command-item-text">CV PDF</span>
-                    </div>
-                    <span class="command-item-badge">Link</span>
-                </a>
+                @if ($commandAbout?->cv_pdf_file)
+                    <a href="{{ asset('storage/' . $commandAbout->cv_pdf_file) }}" target="_blank"
+                        class="command-item">
+                        <div class="command-item-left">
+                            <i class="bi bi-file-pdf command-item-icon"></i>
+                            <span class="command-item-text">CV PDF</span>
+                        </div>
+                        <span class="command-item-badge">Link</span>
+                    </a>
+                @endif
 
-                <a href="#" class="command-item">
-                    <div class="command-item-left">
-                        <i class="bi bi-file-word command-item-icon"></i>
-                        <span class="command-item-text">CV Word</span>
-                    </div>
-                    <span class="command-item-badge">Link</span>
-                </a>
+                @if ($commandAbout?->cv_word_url)
+                    <a href="{{ $commandAbout->cv_word_url }}" target="_blank" class="command-item">
+                        <div class="command-item-left">
+                            <i class="bi bi-file-word command-item-icon"></i>
+                            <span class="command-item-text">CV Word</span>
+                        </div>
+                        <span class="command-item-badge">Link</span>
+                    </a>
+                @endif
 
-                <a href="#" class="command-item">
-                    <div class="command-item-left">
-                        <i class="bi bi-files command-item-icon"></i>
-                        <span class="command-item-text">CV Copy</span>
-                    </div>
-                    <span class="command-item-badge">Link</span>
-                </a>
+                @if ($commandAbout?->cv_word_url)
+                    <a href="#" class="command-item"
+                        onclick="makeGoogleDocsCopy('{{ $commandAbout->cv_word_url }}'); return false;">
+                        <div class="command-item-left">
+                            <i class="bi bi-files command-item-icon"></i>
+                            <span class="command-item-text">CV Copy</span>
+                        </div>
+                        <span class="command-item-badge">Link</span>
+                    </a>
+                @endif
             </div>
 
             <!-- No Results Message -->
@@ -171,3 +191,29 @@
         </div>
     </div>
 </div>
+
+{{-- Di layouts/pages.blade.php, sebelum </body> --}}
+<script>
+    function makeGoogleDocsCopy(url) {
+        const patterns = [
+            /\/document\/d\/([a-zA-Z0-9-_]+)/,
+            /\/file\/d\/([a-zA-Z0-9-_]+)/,
+            /id=([a-zA-Z0-9-_]+)/,
+        ];
+
+        let documentId = null;
+        for (let pattern of patterns) {
+            const match = url.match(pattern);
+            if (match) {
+                documentId = match[1];
+                break;
+            }
+        }
+
+        if (documentId) {
+            window.open(`https://docs.google.com/document/d/${documentId}/copy`, '_blank');
+        } else {
+            window.open(url, '_blank');
+        }
+    }
+</script>

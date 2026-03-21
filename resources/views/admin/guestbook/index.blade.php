@@ -37,6 +37,15 @@
             overflow: hidden;
         }
 
+        .message-card.pinned {
+            border-color: #ffc107;
+            border-left: 4px solid #ffc107;
+        }
+
+        .message-card.hidden {
+            opacity: 0.55;
+        }
+
         .message-card-header {
             display: flex;
             align-items: center;
@@ -141,7 +150,7 @@
         .card-actions {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.4rem;
             margin-left: auto;
             flex-shrink: 0;
         }
@@ -153,6 +162,20 @@
 
         .toggle-icon.open {
             transform: rotate(180deg);
+        }
+
+        /* Post form */
+        .post-form-card {
+            background: #fff;
+            border: 2px dashed #6777ef;
+            border-radius: 0.5rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .post-form-card textarea {
+            resize: vertical;
+            min-height: 80px;
         }
     </style>
 @endpush
@@ -175,7 +198,7 @@
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-value text-primary">{{ $stats['total'] }}</div>
-                        <div class="stat-label">Total Messages</div>
+                        <div class="stat-label">Total</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-value text-success">{{ $stats['replies'] }}</div>
@@ -183,15 +206,38 @@
                     </div>
                     <div class="stat-card">
                         <div class="stat-value text-info">{{ $stats['users'] }}</div>
-                        <div class="stat-label">Unique Users</div>
+                        <div class="stat-label">Users</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value text-warning">{{ $stats['pinned'] }}</div>
+                        <div class="stat-label">Pinned</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value text-secondary">{{ $stats['hidden'] }}</div>
+                        <div class="stat-label">Hidden</div>
                     </div>
                 </div>
 
+                {{-- Post Message Form --}}
+                <div class="post-form-card">
+                    <h6 class="mb-3"><i class="bi bi-pencil-square"></i> Post Message as Author</h6>
+                    <textarea class="form-control mb-2" id="adminMessageText" rows="3" placeholder="Write a message..."
+                        maxlength="1000"></textarea>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted"><span id="adminCharCount">0</span>/1000</small>
+                        <button class="btn btn-primary btn-sm" onclick="postAdminMessage()">
+                            <i class="bi bi-send"></i> Post Message
+                        </button>
+                    </div>
+                </div>
+
+                {{-- Messages --}}
                 <div class="card">
                     <div class="card-body">
                         @forelse($messages as $msg)
-                            <div class="message-card" id="admin-msg-{{ $msg->id }}">
-                                {{-- Header (clickable untuk expand) --}}
+                            <div class="message-card {{ $msg->is_pinned ? 'pinned' : '' }} {{ $msg->is_hidden ? 'hidden' : '' }}"
+                                id="admin-msg-{{ $msg->id }}">
+
                                 <div class="message-card-header" onclick="toggleCard({{ $msg->id }})">
                                     <div class="message-avatar">
                                         @if ($msg->user?->avatar)
@@ -201,16 +247,19 @@
                                         @endif
                                     </div>
                                     <div style="flex:1; min-width:0;">
-                                        <div class="d-flex align-items-center gap-2">
+                                        <div class="d-flex align-items-center gap-1 flex-wrap">
                                             <strong class="small">{{ $msg->user->name ?? 'Anonymous' }}</strong>
                                             @if ($msg->is_author)
                                                 <span class="author-badge">Author</span>
                                             @endif
-                                            <span class="text-muted" style="font-size:0.75rem">
-                                                &nbsp; - &nbsp;<i
-                                                    class="bi bi-{{ $msg->user?->provider === 'github' ? 'github' : 'google' }}"></i>
-                                                {{ $msg->user?->provider ?? '' }}
-                                            </span>
+                                            @if ($msg->is_pinned)
+                                                <span class="badge badge-warning"><i class="bi bi-pin-fill"></i>
+                                                    Pinned</span>
+                                            @endif
+                                            @if ($msg->is_hidden)
+                                                <span class="badge badge-secondary"><i class="bi bi-eye-slash"></i>
+                                                    Hidden</span>
+                                            @endif
                                         </div>
                                         <div class="message-preview">{{ $msg->message }}</div>
                                     </div>
@@ -223,6 +272,18 @@
                                         </span>
                                         <small
                                             class="text-muted d-none d-md-block">{{ $msg->created_at->format('d M Y') }}</small>
+                                        <button
+                                            class="btn btn-sm {{ $msg->is_pinned ? 'btn-warning' : 'btn-outline-warning' }}"
+                                            title="{{ $msg->is_pinned ? 'Unpin' : 'Pin' }}"
+                                            onclick="togglePin({{ $msg->id }})">
+                                            <i class="bi bi-pin{{ $msg->is_pinned ? '-fill' : '' }}"></i>
+                                        </button>
+                                        <button
+                                            class="btn btn-sm {{ $msg->is_hidden ? 'btn-secondary' : 'btn-outline-secondary' }}"
+                                            title="{{ $msg->is_hidden ? 'Show' : 'Hide' }}"
+                                            onclick="toggleHidden({{ $msg->id }})">
+                                            <i class="bi bi-eye{{ $msg->is_hidden ? '-slash' : '' }}"></i>
+                                        </button>
                                         <button class="btn btn-primary btn-sm"
                                             onclick="toggleReplyForm({{ $msg->id }})">
                                             <i class="bi bi-reply"></i>
@@ -236,7 +297,6 @@
                                         id="toggle-icon-{{ $msg->id }}"></i>
                                 </div>
 
-                                {{-- Body (collapsed by default) --}}
                                 <div class="message-card-body" id="card-body-{{ $msg->id }}">
                                     <div class="message-full">
                                         <div class="text-muted small mb-1">
@@ -245,7 +305,6 @@
                                         {{ $msg->message }}
                                     </div>
 
-                                    {{-- Replies --}}
                                     @if ($msg->replies->count() > 0)
                                         <div class="reply-section">
                                             @foreach ($msg->replies as $reply)
@@ -281,9 +340,9 @@
                                         </div>
                                     @endif
 
-                                    {{-- Reply Form --}}
                                     <div class="reply-form" id="reply-form-{{ $msg->id }}">
-                                        <textarea class="form-control mt-2" id="reply-text-{{ $msg->id }}" rows="2" placeholder="Write a reply..."></textarea>
+                                        <textarea class="form-control mt-2" id="reply-text-{{ $msg->id }}" rows="2"
+                                            placeholder="Write a reply..."></textarea>
                                         <div class="mt-2 d-flex gap-2">
                                             <button class="btn btn-primary btn-sm"
                                                 onclick="submitReply({{ $msg->id }})">
@@ -322,8 +381,92 @@
             timer: 2000
         });
         const BASE = "{{ route('guestbooks.index') }}";
+        const CSRF = '{{ csrf_token() }}';
 
-        // Toggle expand/collapse card
+        // Char count
+        document.getElementById('adminMessageText')?.addEventListener('input', function() {
+            document.getElementById('adminCharCount').textContent = this.value.length;
+        });
+
+        // Post message
+        function postAdminMessage() {
+            const message = document.getElementById('adminMessageText').value.trim();
+            if (!message) return Toast.fire({
+                icon: 'error',
+                title: 'Message cannot be empty.'
+            });
+
+            fetch(BASE, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': CSRF,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message
+                    })
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Message posted!'
+                        });
+                        setTimeout(() => location.reload(), 700);
+                    } else {
+                        Toast.fire({
+                            icon: 'error',
+                            title: data.message || 'Failed.'
+                        });
+                    }
+                });
+        }
+
+        // Toggle pin
+        function togglePin(id) {
+            fetch(`${BASE}/${id}/pin`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': CSRF,
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        Toast.fire({
+                            icon: 'success',
+                            title: data.message
+                        });
+                        setTimeout(() => location.reload(), 700);
+                    }
+                });
+        }
+
+        // Toggle hidden
+        function toggleHidden(id) {
+            fetch(`${BASE}/${id}/hidden`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': CSRF,
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        Toast.fire({
+                            icon: 'success',
+                            title: data.message
+                        });
+                        setTimeout(() => location.reload(), 700);
+                    }
+                });
+        }
+
+        // Toggle card expand
         function toggleCard(id) {
             const body = document.getElementById(`card-body-${id}`);
             const icon = document.getElementById(`toggle-icon-${id}`);
@@ -331,13 +474,12 @@
             icon.classList.toggle('open');
         }
 
-        // Toggle reply form — auto expand card dulu
+        // Toggle reply form
         function toggleReplyForm(id) {
             const body = document.getElementById(`card-body-${id}`);
             const icon = document.getElementById(`toggle-icon-${id}`);
             const form = document.getElementById(`reply-form-${id}`);
 
-            // Expand card kalau belum terbuka
             if (!body.classList.contains('show')) {
                 body.classList.add('show');
                 icon.classList.add('open');
@@ -360,7 +502,7 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'X-CSRF-TOKEN': CSRF,
                         'Accept': 'application/json'
                     },
                     body: JSON.stringify({
@@ -397,7 +539,7 @@
                     fetch(`${BASE}/${id}/destroy`, {
                             method: 'DELETE',
                             headers: {
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'X-CSRF-TOKEN': CSRF,
                                 'Accept': 'application/json'
                             }
                         })

@@ -82,16 +82,18 @@
                         </div>
                     @endif
 
-                    {{-- Static Opening --}}
                     <h2 class="content-title">Assalamu'alaikum</h2>
 
-                    {{-- Dynamic Bio Content --}}
-                    <div class="bio-content">
+                    <div class="bio-content bio-collapsed" id="bioContent">
                         {!! $intro->bio !!}
                     </div>
 
-                    {{-- Static Closing --}}
-                    <h3 class="content-closing">Wassalamu'alaikum!</h3>
+                    <h3 class="content-closing" id="bioClosing" style="display:none;">Wassalamu'alaikum!</h3>
+                    <button class="bio-toggle-btn" id="bioToggleBtn" onclick="toggleBio()">
+                        <span id="bioToggleText">Read more</span>
+                        <i class="bi bi-chevron-down" id="bioToggleIcon"></i>
+                    </button>
+
                 </div>
             @else
                 <div class="content-card">
@@ -310,6 +312,38 @@
 
 @push('scripts')
     <script>
+        // Bio toggle
+        let bioExpanded = false;
+
+        function toggleBio() {
+            const bio = document.getElementById('bioContent');
+            const btn = document.getElementById('bioToggleBtn');
+            const text = document.getElementById('bioToggleText');
+            const icon = document.getElementById('bioToggleIcon');
+            const closing = document.getElementById('bioClosing');
+
+            bioExpanded = !bioExpanded;
+
+            if (bioExpanded) {
+                bio.classList.remove('bio-collapsed');
+                text.textContent = 'Show less';
+                icon.className = 'bi bi-chevron-up';
+                btn.classList.add('expanded');
+                closing.style.display = 'block';
+            } else {
+                bio.classList.add('bio-collapsed');
+                text.textContent = 'Read more';
+                icon.className = 'bi bi-chevron-down';
+                btn.classList.remove('expanded');
+                closing.style.display = 'none';
+                // Scroll back ke atas card
+                document.getElementById('bioContent').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        }
+
         // Tab switching
         document.querySelectorAll('.tab-item').forEach(tab => {
             tab.addEventListener('click', function(e) {

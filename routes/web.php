@@ -197,7 +197,10 @@ Route::middleware(['auth', 'role:author'])->group(
 
             Route::prefix('guestbook')->name('guestbooks.')->group(function () {
                 Route::get('/', [AdminGuestbookController::class, 'index'])->name('index');
+                Route::post('/', [AdminGuestbookController::class, 'store'])->name('store');           // post sendiri
                 Route::post('/{id}/reply', [AdminGuestbookController::class, 'reply'])->name('reply');
+                Route::post('/{id}/pin', [AdminGuestbookController::class, 'togglePin'])->name('pin');
+                Route::post('/{id}/hidden', [AdminGuestbookController::class, 'toggleHidden'])->name('hidden');
                 Route::delete('/{id}/destroy', [AdminGuestbookController::class, 'destroy'])->name('destroy');
             });
         });

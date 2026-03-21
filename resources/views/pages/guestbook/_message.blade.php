@@ -28,6 +28,12 @@
                     <span class="author-badge">Author</span>
                 @endif
             </div>
+            {{-- Tambah di message-header, setelah author-name --}}
+            @if ($msg->is_pinned)
+                <span style="font-size:0.7rem; color:#f59e0b;">
+                    <i class="bi bi-pin-fill"></i> Pinned
+                </span>
+            @endif
             <div class="message-date">{{ $msg->created_at->format('d/m/Y, H:i') }}</div>
         </div>
     </div>

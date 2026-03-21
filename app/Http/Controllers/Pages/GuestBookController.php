@@ -23,20 +23,18 @@ class GuestBookController extends Controller
     public function index()
     {
         $guestUserId = Session::get('guestbook_user_id');
-        Log::info('Guestbook index session check:', [
-            'session_id' => Session::getId(),
-            'guest_user_id' => $guestUserId,
-        ]);
-
-
         $guestUser = $guestUserId ? GuestbookUser::find($guestUserId) : null;
 
         $messages = GuestbookMessage::with(['user', 'replies.user', 'replies.likes', 'likes'])
             ->whereNull('parent_id')
+            ->where('is_hidden', false)        // hidden tidak tampil
+            ->orderByDesc('is_pinned')         // pinned selalu di atas
             ->latest()
             ->paginate(20);
 
-        $totalMessages = GuestbookMessage::whereNull('parent_id')->count();
+        $totalMessages = GuestbookMessage::whereNull('parent_id')
+            ->where('is_hidden', false)
+            ->count();
 
         return view('pages.guestbook.index', compact('messages', 'totalMessages', 'guestUser'));
     }

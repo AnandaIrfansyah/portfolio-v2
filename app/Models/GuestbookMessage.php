@@ -6,7 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class GuestbookMessage extends Model
 {
-    protected $fillable = ['guestbook_user_id', 'parent_id', 'message', 'is_author'];
+    protected $fillable = [
+        'guestbook_user_id',
+        'parent_id',
+        'message',
+        'is_author',
+        'is_pinned',   // tambah
+        'is_hidden',
+    ];
 
     public function user()
     {

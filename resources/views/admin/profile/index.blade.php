@@ -69,7 +69,7 @@
                                     @if ($user->twitter_url)
                                         <a href="{{ $user->twitter_url }}" class="btn btn-info rounded-circle mx-2"
                                              target="_blank">
-                                            <i class="fab fa-twitter"></i>
+                                            <i class="fab fa-instagram"></i>
                                         </a>
                                     @endif
 
@@ -171,7 +171,7 @@
 
 
                                             <div class="form-group">
-                                                <label>Twitter URL</label>
+                                                <label>Instagram URL</label>
                                                 <input type="url" name="twitter_url" class="form-control"
                                                     value="{{ old('twitter_url', $user->twitter_url) }}">
                                             </div>
