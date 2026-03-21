@@ -753,10 +753,10 @@
                                 <strong><i class="bi bi-file-pdf"></i> CV PDF:</strong>
                                 ${d.cv_pdf_file ?
                                     `<div class="mt-2">
-                                                                                                                                    <a href="/storage/${d.cv_pdf_file}" target="_blank" class="btn btn-sm btn-outline-danger">
-                                                                                                                                        <i class="bi bi-download"></i> Download PDF
-                                                                                                                                    </a>
-                                                                                                                                </div>` :
+                                                                                                                                        <a href="/storage/${d.cv_pdf_file}" target="_blank" class="btn btn-sm btn-outline-danger">
+                                                                                                                                            <i class="bi bi-download"></i> Download PDF
+                                                                                                                                        </a>
+                                                                                                                                    </div>` :
                                     '<p class="text-muted mt-2">No PDF uploaded</p>'
                                 }
                             </div>
@@ -764,10 +764,10 @@
                                 <strong><i class="bi bi-file-word"></i> CV Google Docs:</strong>
                                 ${d.cv_word_url ?
                                     `<div class="mt-2">
-                                                                                                                                    <a href="${d.cv_word_url}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                                                                                                                        <i class="bi bi-box-arrow-up-right"></i> Open Google Docs
-                                                                                                                                    </a>
-                                                                                                                                </div>` :
+                                                                                                                                        <a href="${d.cv_word_url}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                                                                                                                            <i class="bi bi-box-arrow-up-right"></i> Open Google Docs
+                                                                                                                                        </a>
+                                                                                                                                    </div>` :
                                     '<p class="text-muted mt-2">No Google Docs URL</p>'
                                 }
                             </div>
