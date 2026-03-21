@@ -69,6 +69,11 @@
                     <i class="fas fa-tools"></i> <span>Tech Stack</span>
                 </a>
             </li>
+            <li class="nav-item {{ Request::is('setting/careers') ? 'active' : '' }}">
+                <a href="{{ route('careers.index') }}" class="nav-link">
+                    <i class="fas fa-briefcase"></i> <span>Career</span>
+                </a>
+            </li>
         </ul>
     </aside>
 </div>

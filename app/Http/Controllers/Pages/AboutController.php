@@ -7,6 +7,7 @@ use App\Models\AboutIntro;
 use App\Models\Certification;
 use App\Models\Education;
 use App\Models\Experience;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class AboutController extends Controller
@@ -14,6 +15,7 @@ class AboutController extends Controller
     public function index()
     {
         // Get Intro data (only 1 record)
+        $user = User::first();
         $intro = AboutIntro::first();
 
         // Get Experiences with positions and achievements (visible only, ordered)
@@ -38,6 +40,7 @@ class AboutController extends Controller
         $linkedinCertUrl = $certifications->first()?->linkedin_certifications_url;
 
         return view('pages.about.index', compact(
+            'user',
             'intro',
             'experiences',
             'educations',

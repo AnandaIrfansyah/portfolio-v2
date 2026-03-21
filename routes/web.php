@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AboutController as AdminAboutController;
 use App\Http\Controllers\Admin\AuthorController;
+use App\Http\Controllers\Admin\CareerController as AdminCareerController;
 use App\Http\Controllers\Admin\CertificationController;
 use App\Http\Controllers\Admin\ContactController as AdminContactController;
 use App\Http\Controllers\Admin\EducationController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\Admin\TechStackController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Pages\AboutController;
 use App\Http\Controllers\Pages\BlogController;
+use App\Http\Controllers\Pages\CareerController;
 use App\Http\Controllers\Pages\ContactController;
 use App\Http\Controllers\Pages\GuestBookController;
 use App\Http\Controllers\Pages\HomeController;
@@ -65,6 +67,9 @@ Route::prefix('guestbook')->name('guestbook.')->group(function () {
     Route::get('/auth/{provider}/callback', [GuestBookController::class, 'handleProviderCallback'])->name('auth.callback');
     Route::post('/logout', [GuestBookController::class, 'logout'])->name('logout');
 });
+Route::prefix('career')->group(function () {
+    Route::get('/', [CareerController::class, 'index'])->name('career.index');
+});
 
 
 Route::middleware(['auth', 'role:author'])->group(
@@ -87,6 +92,10 @@ Route::middleware(['auth', 'role:author'])->group(
                 Route::get('/{id}/show', [TechStackController::class, 'show'])->name('tech-stack.show');
                 Route::put('/{id}/update', [TechStackController::class, 'update'])->name('tech-stack.update');
                 Route::delete('/{id}/destroy', [TechStackController::class, 'destroy'])->name('tech-stack.destroy');
+            });
+            Route::prefix('careers')->name('careers.')->group(function () {
+                Route::get('/', [AdminCareerController::class, 'index'])->name('index');
+                Route::post('/', [AdminCareerController::class, 'store'])->name('store');
             });
         });
 

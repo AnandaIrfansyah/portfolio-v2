@@ -19,7 +19,6 @@
         }
 
         .project-support-card {
-            max-width: 900px;
             margin: auto;
             padding: 40px 30px;
             text-align: center;
@@ -66,7 +65,8 @@
         }
 
         .btn-support-full {
-            display: flex;
+            max-width: 900px;
+            display: center;
             align-items: center;
             justify-content: center;
             gap: 10px;
@@ -119,7 +119,7 @@
                             <i class="bi bi-envelope"></i>
                             <span data-lang="btn-contact">Contact</span>
                         </a>
-                        <a href="#" class="btn btn-success">
+                        <a href="{{ route('career.index') }}" class="btn btn-success">
                             <i class="bi bi-briefcase"></i>
                             <span data-lang="btn-hireable">Hireable</span>
                         </a>

@@ -10,6 +10,77 @@
             object-fit: cover;
             border-radius: 8px;
         }
+
+        .project-support-card {
+            margin: auto;
+            padding: 40px 30px;
+            text-align: center;
+            border-radius: 16px;
+
+            background: linear-gradient(135deg, #020617, #020617 40%, #0f0226);
+            border: 1px solid rgba(120, 120, 255, 0.2);
+
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        .project-support-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 20px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 50%;
+
+            background: linear-gradient(135deg, #4f46e5, #9333ea);
+            color: white;
+            font-size: 26px;
+
+            box-shadow: 0 6px 20px rgba(147, 51, 234, 0.5);
+        }
+
+        .project-support-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+
+        .project-support-desc {
+            max-width: 600px;
+            margin: 0 auto 30px;
+
+            font-size: 15px;
+            color: #9ca3af;
+            line-height: 1.6;
+        }
+
+        .btn-support-full {
+            max-width: 900px;
+            display: center;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+
+            width: 100%;
+            padding: 14px 20px;
+
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            color: white;
+
+            background: linear-gradient(90deg, #3b82f6, #6366f1, #9333ea);
+
+            transition: all .25s ease;
+        }
+
+        .btn-support-full:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
+        }
     </style>
 @endpush
 
@@ -103,6 +174,31 @@
                     <h3 class="content-closing">Wassalamu'alaikum!</h3>
                 </div>
             @endif
+
+            <section class="support-section">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="project-support-card">
+                            <div class="project-support-icon">
+                                <i class="bi bi-heart-fill"></i>
+                            </div>
+
+                            <h3 class="project-support-title" data-lang="support-title">
+                                Support My Work
+                            </h3>
+
+                            <p class="project-support-desc" data-lang="support-desc">
+                                Help me continue creating open source projects and sharing knowledge with the community!
+                            </p>
+
+                            <a href="{{ $user->support_url }}" target="_blank" class="btn-support-full">
+                                <i class="bi bi-heart-fill"></i>
+                                <span data-lang="btn-support">Support</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
 
         <!-- Experiences Section -->
